@@ -28,14 +28,12 @@ tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>
                 if ((black[0][q][0][0] !=copyofwhite[0][i][0][0] || black[0][q][0][1] !=copyofwhite[0][i][0][1]-1) && (copyofwhite[0][q][0][0] !=copyofwhite[0][i][0][0] || copyofwhite[0][q][0][1] !=copyofwhite[0][i][0][1]-1)){
                     white[1][i].push_back({copyofwhite[0][i][0][0], copyofwhite[0][i][0][1]-1});
                     for(size_t d =0; d<8;d++){
-                        if (copyofwhite[0][i][0][1]==6 && copyofwhite[0][i][0][1]!=){        //дописати виключення
+                        if (copyofwhite[0][i][0][1]==6){        //дописати виключення
                             white[1][i].push_back({copyofwhite[0][i][0][0], copyofwhite[0][i][0][1]-2});
                         }
                     }
                     break;
                 }
-            }
-            
             }
             
             
@@ -54,18 +52,11 @@ tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>
     }
     // predicting for first Rook
     bool freespace = true;
-    while(freespace){
-        for (size_t j = 1; j < 8; j++)
-        {
-            for (size_t i = 0; i < 16; i++)
-            {
-                if (copyofwhite[0][i][0][1] == copyofwhite[0][8][0][1]-j ){
-                    freespace = false;
-                }
-             }
-             white[1].push_back({copyofwhite[0][8][0][1]-j,copyofwhite[0][8][0][0]-j })
-        }
+    while (freespace)
+    {
+        break;
     }
+    
 
     vector <vector<vector<vector<int>>>> copyofblack = black;
     
