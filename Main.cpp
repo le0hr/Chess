@@ -14,12 +14,8 @@ vector<char> enter(){
 
     return data;
 }
-
-tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>> predicthion (vector <vector<vector<vector<int>>>> black, vector <vector<vector<vector<int>>>> white, int Turn, vector<char>move){
-
+tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>> PawnsPredicthion (vector <vector<vector<vector<int>>>> black, vector <vector<vector<vector<int>>>> white, int Turn, vector<char>move){
     vector <vector<vector<vector<int>>>> copyofwhite = white;
-    
-    // predicting for pawns
     for (size_t i = 0; i < 8; i++)
     {
             white[1][i].clear();
@@ -47,17 +43,7 @@ tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>
                 }
             
         }
-        
-        
     }
-    // predicting for first Rook
-    bool freespace = true;
-    while (freespace)
-    {
-        break;
-    }
-    
-
     vector <vector<vector<vector<int>>>> copyofblack = black;
     
     for (size_t i = 0; i < 8; i++)
@@ -79,22 +65,253 @@ tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>
     }
     tuple tp ={white, black};
     return tp;
+        
 }
 
+tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>> RooksPredicthion (vector <vector<vector<vector<int>>>> black, vector <vector<vector<vector<int>>>> white, int Turn, vector<char>move){
+    // predicting for white rooks
+    bool freespace = true;
+    int j = 0;
+    vector <vector<vector<vector<int>>>> copyofwhite = white;
+    white[1][8].clear();
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][8][0][0]-j-1 <0 || (copyofwhite[0][8][0][0]-j-1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][8].push_back({copyofwhite[0][8][0][0]-j-1,copyofwhite[0][8][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][8][0][0]+j+1 >7|| (copyofwhite[0][8][0][0]+j+1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][8].push_back({copyofwhite[0][8][0][0]+j+1,copyofwhite[0][8][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][8][0][1]-j-1 <0 || (copyofwhite[0][8][0][1]-j-1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][8][0][1]+j+1 >7 || (copyofwhite[0][8][0][1]+j+1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1]+j+1 });
+        j++;
+    }
+    j =0;
+    white[1][8].clear();
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][15][0][0]-j-1 <0 || (copyofwhite[0][15][0][0]-j-1==copyofwhite[0][i][0][0] && copyofwhite[0][15][0][1]==copyofwhite[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][15].push_back({copyofwhite[0][15][0][0]-j-1,copyofwhite[0][15][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][15][0][0]+j+1 >7|| (copyofwhite[0][15][0][0]+j+1==copyofwhite[0][i][0][0] && copyofwhite[0][15][0][1]==copyofwhite[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][15].push_back({copyofwhite[0][15][0][0]+j+1,copyofwhite[0][15][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][15][0][1]-j-1 <0 || (copyofwhite[0][15][0][1]-j-1==copyofwhite[0][i][0][1] && copyofwhite[0][15][0][0]==copyofwhite[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1] -j-1});
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofwhite[0][15][0][1]+j+1 >7 || (copyofwhite[0][15][0][1]+j+1==copyofwhite[0][i][0][1] && copyofwhite[0][15][0][0]==copyofwhite[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1]+j+1 });
+        j++;
+    }
 
+    // predicting for black rooks
+    freespace = true;
+    j = 0;
+    vector <vector<vector<vector<int>>>> copyofblack = black;
+    black[1][8].clear();
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][8][0][0]-j-1 <0 || (copyofblack[0][8][0][0]-j-1==copyofblack[0][i][0][0] && copyofblack[0][8][0][1]==copyofblack[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][8].push_back({copyofblack[0][8][0][0]-j-1,copyofblack[0][8][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][8][0][0]+j+1 >7|| (copyofblack[0][8][0][0]+j+1==copyofblack[0][i][0][0] && copyofblack[0][8][0][1]==copyofblack[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][8].push_back({copyofblack[0][8][0][0]+j+1,copyofblack[0][8][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][8][0][1]-j-1 <0 || (copyofblack[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] -j-1});
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][8][0][1]+j+1 >7 || (copyofblack[0][8][0][1]+j+1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1]+j+1 });
+        j++;
+    }
+    freespace = true;
+    j=0;
+    black[1][15].clear();
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][15][0][0]-j-1 <0 || (copyofblack[0][15][0][0]-j-1==copyofblack[0][i][0][0] && copyofblack[0][15][0][1]==copyofblack[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][15].push_back({copyofblack[0][15][0][0]-j-1,copyofblack[0][15][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][15][0][0]+j+1 >7|| (copyofblack[0][15][0][0]+j+1==copyofblack[0][i][0][0] && copyofblack[0][15][0][1]==copyofblack[0][i][0][1])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][15].push_back({copyofblack[0][15][0][0]+j+1,copyofblack[0][15][0][1] });
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][15][0][1]-j-1 <0 || (copyofblack[0][15][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] -j-1});
+        j++;
+    }
+    freespace = true;
+    j =0;
+    while (freespace)
+    {
+        for (size_t i = 0; i < 16; i++)
+        {
+            if(copyofblack[0][15][0][1]+j+1 >7 || (copyofblack[0][15][0][1]+j+1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0])){
+                freespace = false;
+                break;
+            }
+        }
+        black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1]+j+1 });
+        j++;
+    }
+    tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>> tp= {white,black};
 
+    return tp;
+}
 
 
 vector <vector<vector<vector<int>>>> makeTurn(vector<char> move, vector <vector<vector<vector<int>>>> piece){
     if (move.size() == 2){
         move[0] = ((int)move[0]-97);
         move[1] = 7-((int)move[1] - (int)'0'-1);
-    }
-    else{
-        move[1] = ((int)move[1]-97);
-        move[2] = 7-((int)move[1] - (int)'0'-1);
-    }
-    for (size_t i = 0; i < piece[1].size(); i++)
+        for (size_t i = 0; i < 8; i++)
     {
         for (size_t j = 0; j < piece[1][i].size(); j++)
         {
@@ -106,6 +323,29 @@ vector <vector<vector<vector<int>>>> makeTurn(vector<char> move, vector <vector<
         }
         
     }
+    }
+    else{
+        move[1] = ((int)move[1]-97);
+        move[2] = 7-((int)move[2] - (int)'0'-1);
+        switch ((int)move[0])
+        {
+        case (int)'R':
+            for (size_t i = 0; i < piece[1][8].size(); i++)
+            {
+                if(piece[1][8][i][0]==move[1] && piece[1][8][i][1] == move[2]){
+                    piece[0][8][0][0] = move[1];
+                    piece[0][8][0][1] = move[2];
+                    return piece;
+                }
+            }
+            
+            break;
+        
+        default:
+            break;
+        }
+    }
+    
     
 }
 
@@ -177,7 +417,10 @@ int main(){
         else{
             black = makeTurn(move, black);  
         }
-        tuple tp =predicthion(black, white, 0, move);    
+        tuple tp =PawnsPredicthion(black, white, 0, move);    
+        white = get<0>(tp);
+        black = get<1>(tp);
+        tp = RooksPredicthion(black, white, 0, move); 
         white = get<0>(tp);
         black = get<1>(tp);
         Turn = (Turn +1)%2;
