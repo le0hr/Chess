@@ -2,6 +2,11 @@
     "files.associations": {
         "random": "cpp",
         "tuple": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "*.tcc": "cpp",
+        "deque": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "system_error": "cpp"
     }
 }
