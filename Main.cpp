@@ -87,229 +87,197 @@ tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>
     vector <vector<vector<vector<int>>>> copyofblack = black;
     white[1][8].clear();
     for(int j =0; j<7; j++)
-    {
-        for (int i = 0; i < 16; i++){
-            if(copyofwhite[0][8][0][0] -j-1 >=0 ){
+    {   
+        if(copyofwhite[0][8][0][0] -j-1 >=0 ){
+            for (int i = 0; i < 16; i++){
                 if(copyofwhite[0][8][0][0]-j-1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1]){
-                    white[1][8].push_back({copyofwhite[0][8][0][0] -j-1,copyofwhite[0][8][0][1] });
+                    break;
                 }
-                else if(copyofwhite[0][8][0][1]-j-1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0]){
-                    white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
-                }
-            }
-            else if (copyofwhite[0][8][0][0] +j+1 <=7 ){
-                if (copyofwhite[0][8][0][0]+j+1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1]){
-                white[1][8].push_back({copyofwhite[0][8][0][0] +j+1,copyofwhite[0][8][0][1] });
-                }
-            
-                else if (copyofwhite[0][8][0][1]+j+1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0]){
-                    white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] +j+1});
-                }
-            }
-        }    
-    }
-
-    for (int j = 0; j < 7; j++)
-    {
-            freespace1 = true;
-        freespace2 = true;
-        freespace3 = true;
-        freespace4 = true;
-        for (int i = 0; i < 16; i++){
-            if(copyofwhite[0][8][0][0] -j-1 >=0 ){
-                if(copyofwhite[0][8][0][0]-j-1==copyofblack[0][i][0][0] && copyofwhite[0][8][0][1]==copyofblack[0][i][0][1] && freespace1){
+                else if(copyofwhite[0][8][0][0]-j-1==copyofblack[0][i][0][0] && copyofwhite[0][8][0][1]==copyofblack[0][i][0][1]){
                     white[1][8].push_back({copyofwhite[0][8][0][0]-j-1,copyofwhite[0][8][0][1] });
-                    freespace1 = false;
+                    break;
                 }
-                else if(copyofwhite[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofwhite[0][8][0][0]==copyofblack[0][i][0][0] && freespace2){
-                    white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
-                    freespace2 = false;
-                }
+                white[1][8].push_back({copyofwhite[0][8][0][0] -j-1,copyofwhite[0][8][0][1] });
             }
-            else if (copyofwhite[0][8][0][0] +j+1 <=7 ){
-                if(copyofwhite[0][8][0][0]+j+1==copyofblack[0][i][0][0] && copyofwhite[0][8][0][1]==copyofblack[0][i][0][1] && freespace3){
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][1]-j-1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0]){
+                    break;
+                }
+                else if(copyofwhite[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofwhite[0][8][0][0]==copyofblack[0][i][0][0]){
+                    white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
+                    break;
+                }
+                white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
+            }
+        }
+        else if (copyofwhite[0][8][0][0] +j+1 <=7 ){
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][0]+j+1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1]){
+                    break;
+                }
+                else if(copyofwhite[0][8][0][0]+j+1==copyofblack[0][i][0][0] && copyofwhite[0][8][0][1]==copyofblack[0][i][0][1] && freespace3){
                     white[1][8].push_back({copyofwhite[0][8][0][0]+j+1,copyofwhite[0][8][0][1] });
-                    freespace3 = false;
+                    break;
+                }
+                white[1][8].push_back({copyofwhite[0][8][0][0] +j+1,copyofwhite[0][8][0][1] });
+            }
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][1]+j+1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0]){
+                    break;
                 }
                 else if(copyofwhite[0][8][0][1]+j+1==copyofblack[0][i][0][1] && copyofwhite[0][8][0][0]==copyofblack[0][i][0][0] && freespace4){
                     white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] +j+1});
-                    freespace4 = false;
+                    break;
                 }
+                white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] +j+1});
             }
-        }
+        }  
     }
-    
+
     white[1][15].clear();
-    for( int j =0; j<7; j++)
-    {
-        for (int i = 0; i < 16; i++){
-            if(copyofwhite[0][15][0][0] -j-1 >=0 ){
-                if(copyofwhite[0][15][0][0]-j-1==copyofwhite[0][i][0][0] && copyofwhite[0][15][0][1]==copyofwhite[0][i][0][1]){
-                    white[1][15].push_back({copyofwhite[0][15][0][0] -j-1,copyofwhite[0][15][0][1] });
+    for(int j =0; j<7; j++){   
+        if(copyofwhite[0][8][0][0] -j-1 >=0 ){
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][0]-j-1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1]){
+                    break;
                 }
-                else if(copyofwhite[0][15][0][1]-j-1==copyofwhite[0][i][0][1] && copyofwhite[0][15][0][0]==copyofwhite[0][i][0][0]){
-                    white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1] -j-1});
+                else if(copyofwhite[0][8][0][0]-j-1==copyofblack[0][i][0][0] && copyofwhite[0][8][0][1]==copyofblack[0][i][0][1]){
+                    white[1][8].push_back({copyofwhite[0][8][0][0]-j-1,copyofwhite[0][8][0][1] });
+                    break;
                 }
-                else if(copyofwhite[0][15][0][1]-j-1==copyofblack[0][i][0][1] && copyofwhite[0][15][0][0]==copyofblack[0][i][0][0]){
-                    white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1] -j-1});
-                    
-                }
+                white[1][8].push_back({copyofwhite[0][8][0][0] -j-1,copyofwhite[0][8][0][1] });
             }
-            else if (copyofwhite[0][15][0][0] +j+1 <=7 ){
-                if (copyofwhite[0][15][0][0]+j+1==copyofwhite[0][i][0][0] && copyofwhite[0][15][0][1]==copyofwhite[0][i][0][1]){
-                white[1][15].push_back({copyofwhite[0][15][0][0] +j+1,copyofwhite[0][15][0][1] });
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][1]-j-1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0]){
+                    break;
                 }
-            
-                else if (copyofwhite[0][15][0][1]+j+1==copyofwhite[0][i][0][1] && copyofwhite[0][15][0][0]==copyofwhite[0][i][0][0]){
-                    white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1] +j+1});
+                else if(copyofwhite[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofwhite[0][8][0][0]==copyofblack[0][i][0][0]){
+                    white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
+                    break;
                 }
-            }
-        }    
-    }
-  
-    for (int j = 0; j < 7; j++)
-    {
-        freespace1 = true;
-        freespace2 = true;
-        freespace3 = true;
-        freespace4 = true;
-        for (int i = 0; i < 16; i++){
-            if(copyofwhite[0][15][0][0] -j-1 >=0 ){
-                if(copyofwhite[0][15][0][0]-j-1==copyofblack[0][i][0][0] && copyofwhite[0][15][0][1]==copyofblack[0][i][0][1] && freespace1){
-                    white[1][15].push_back({copyofwhite[0][15][0][0]-j-1,copyofwhite[0][15][0][1] });
-                    freespace1 = false;
-                }
-                else if(copyofwhite[0][15][0][1]-j-1==copyofblack[0][i][0][1] && copyofwhite[0][15][0][0]==copyofblack[0][i][0][0] && freespace2){
-                    white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1] -j-1});
-                    freespace2 = false;
-                }
-            }
-            else if (copyofwhite[0][15][0][0] +j+1 <=7 ){
-                if(copyofwhite[0][15][0][0]+j+1==copyofblack[0][i][0][0] && copyofwhite[0][15][0][1]==copyofblack[0][i][0][1] && freespace3){
-                    white[1][15].push_back({copyofwhite[0][15][0][0]+j+1,copyofwhite[0][15][0][1] });
-                    freespace3 = false;
-                }
-                else if(copyofwhite[0][15][0][1]+j+1==copyofblack[0][i][0][1] && copyofwhite[0][15][0][0]==copyofblack[0][i][0][0] && freespace4){
-                    white[1][15].push_back({copyofwhite[0][15][0][0],copyofwhite[0][15][0][1] +j+1});
-                    freespace4 = false;
-                }
+                white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] -j-1});
             }
         }
+        else if (copyofwhite[0][8][0][0] +j+1 <=7 ){
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][0]+j+1==copyofwhite[0][i][0][0] && copyofwhite[0][8][0][1]==copyofwhite[0][i][0][1]){
+                    break;
+                }
+                else if(copyofwhite[0][8][0][0]+j+1==copyofblack[0][i][0][0] && copyofwhite[0][8][0][1]==copyofblack[0][i][0][1] && freespace3){
+                    white[1][8].push_back({copyofwhite[0][8][0][0]+j+1,copyofwhite[0][8][0][1] });
+                    break;
+                }
+                white[1][8].push_back({copyofwhite[0][8][0][0] +j+1,copyofwhite[0][8][0][1] });
+            }
+            for (int i = 0; i < 16; i++){
+                if(copyofwhite[0][8][0][1]+j+1==copyofwhite[0][i][0][1] && copyofwhite[0][8][0][0]==copyofwhite[0][i][0][0]){
+                    break;
+                }
+                else if(copyofwhite[0][8][0][1]+j+1==copyofblack[0][i][0][1] && copyofwhite[0][8][0][0]==copyofblack[0][i][0][0] && freespace4){
+                    white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] +j+1});
+                    break;
+                }
+                white[1][8].push_back({copyofwhite[0][8][0][0],copyofwhite[0][8][0][1] +j+1});
+            }
+        }  
     }
 
     black[1][8].clear();
-    for( int j =0; j<7; j++){
-        for (int i = 0; i < 16; i++){
-            if(copyofblack[0][8][0][0] -j-1 >=0 ){
+    for(int j =0; j<7; j++)
+    {   
+        if(copyofblack[0][8][0][0] -j-1 >=0 ){
+            for (int i = 0; i < 16; i++){
                 if(copyofblack[0][8][0][0]-j-1==copyofblack[0][i][0][0] && copyofblack[0][8][0][1]==copyofblack[0][i][0][1]){
-                    black[1][8].push_back({copyofblack[0][8][0][0] -j-1,copyofblack[0][8][0][1] });
+                    break;
                 }
-                else if(copyofblack[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0]){
-                    black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] -j-1});
-                }
-                else if(copyofblack[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0]){
-                    black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] -j-1});
-                    
-                }
-            }
-            else if (copyofblack[0][8][0][0] +j+1 <=7 ){
-                if (copyofblack[0][8][0][0]+j+1==copyofblack[0][i][0][0] && copyofblack[0][8][0][1]==copyofblack[0][i][0][1]){
-                black[1][8].push_back({copyofblack[0][8][0][0] +j+1,copyofblack[0][8][0][1] });
-                }
-            
-                else if (copyofblack[0][8][0][1]+j+1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0]){
-                    black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] +j+1});
-                }
-            }
-        }    
-    }
-    
-    for (int j = 0; j < 7; j++)
-    {
-        freespace1 = true;
-        freespace2 = true;
-        freespace3 = true;
-        freespace4 = true;
-        for (int i = 0; i < 16; i++){
-            if(copyofblack[0][8][0][0] -j-1 >=0 ){
-                if(copyofblack[0][8][0][0]-j-1==copyofwhite[0][i][0][0] && copyofblack[0][8][0][1]==copyofwhite[0][i][0][1] && freespace1){
+                else if(copyofblack[0][8][0][0]-j-1==copyofwhite[0][i][0][0] && copyofblack[0][8][0][1]==copyofwhite[0][i][0][1]){
                     black[1][8].push_back({copyofblack[0][8][0][0]-j-1,copyofblack[0][8][0][1] });
-                    freespace1 = false;
+                    break;
                 }
-                else if(copyofblack[0][8][0][1]-j-1==copyofwhite[0][i][0][1] && copyofblack[0][8][0][0]==copyofwhite[0][i][0][0] && freespace2){
-                    black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] -j-1});
-                    freespace2 = false;
-                }
+                black[1][8].push_back({copyofblack[0][8][0][0] -j-1,copyofblack[0][8][0][1] });
             }
-            else if (copyofblack[0][8][0][0] +j+1 <=7 ){
-                if(copyofblack[0][8][0][0]+j+1==copyofwhite[0][i][0][0] && copyofblack[0][8][0][1]==copyofwhite[0][i][0][1] && freespace3){
+            for (int i = 0; i < 16; i++){
+                if(copyofblack[0][8][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0]){
+                    break;
+                }
+                else if(copyofblack[0][8][0][1]-j-1==copyofwhite[0][i][0][1] && copyofblack[0][8][0][0]==copyofwhite[0][i][0][0]){
+                    black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] -j-1});
+                    break;
+                }
+                black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] -j-1});
+            }
+        }
+        else if (copyofblack[0][8][0][0] +j+1 <=7 ){
+            for (int i = 0; i < 16; i++){
+                if(copyofblack[0][8][0][0]+j+1==copyofblack[0][i][0][0] && copyofblack[0][8][0][1]==copyofblack[0][i][0][1]){
+                    break;
+                }
+                else if(copyofblack[0][8][0][0]+j+1==copyofwhite[0][i][0][0] && copyofblack[0][8][0][1]==copyofwhite[0][i][0][1] && freespace3){
                     black[1][8].push_back({copyofblack[0][8][0][0]+j+1,copyofblack[0][8][0][1] });
-                    freespace3 = false;
+                    break;
+                }
+                black[1][8].push_back({copyofblack[0][8][0][0] +j+1,copyofblack[0][8][0][1] });
+            }
+            for (int i = 0; i < 16; i++){
+                if(copyofblack[0][8][0][1]+j+1==copyofblack[0][i][0][1] && copyofblack[0][8][0][0]==copyofblack[0][i][0][0]){
+                    break;
                 }
                 else if(copyofblack[0][8][0][1]+j+1==copyofwhite[0][i][0][1] && copyofblack[0][8][0][0]==copyofwhite[0][i][0][0] && freespace4){
                     black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] +j+1});
-                    freespace4 = false;
+                    break;
                 }
+                black[1][8].push_back({copyofblack[0][8][0][0],copyofblack[0][8][0][1] +j+1});
             }
-        }
+        }  
     }
     
     black[1][15].clear();
-    for( int j =0; j<7; j++)
-    {
-        for (int i = 0; i < 16; i++){
-            if(copyofblack[0][15][0][0] -j-1 >=0 ){
+    for(int j =0; j<7; j++)
+    {   
+        if(copyofblack[0][15][0][0] -j-1 >=0 ){
+            for (int i = 0; i < 16; i++){
                 if(copyofblack[0][15][0][0]-j-1==copyofblack[0][i][0][0] && copyofblack[0][15][0][1]==copyofblack[0][i][0][1]){
-                    black[1][15].push_back({copyofblack[0][15][0][0] -j-1,copyofblack[0][15][0][1] });
+                    break;
                 }
-                else if(copyofblack[0][15][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0]){
-                    black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] -j-1});
-                }
-                else if(copyofblack[0][15][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0]){
-                    black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] -j-1});
-                    
-                }
-            }
-            else if (copyofblack[0][15][0][0] +j+1 <=7 ){
-                if (copyofblack[0][15][0][0]+j+1==copyofblack[0][i][0][0] && copyofblack[0][15][0][1]==copyofblack[0][i][0][1]){
-                    black[1][15].push_back({copyofblack[0][15][0][0] +j+1,copyofblack[0][15][0][1] });
-                }
-            
-                else if (copyofblack[0][15][0][1]+j+1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0]){
-                    black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] +j+1});
-                }
-            }
-        }    
-    }
-   
-    for (int j = 0; j < 7; j++)
-    {
-        freespace1 = true;
-        freespace2 = true;
-        freespace3 = true;
-        freespace4 = true;
-        for (int i = 0; i < 16; i++){
-            if(copyofblack[0][15][0][0] -j-1 >=0 ){
-                if(copyofblack[0][15][0][0]-j-1==copyofwhite[0][i][0][0] && copyofblack[0][15][0][1]==copyofwhite[0][i][0][1] && freespace1){
+                else if(copyofblack[0][15][0][0]-j-1==copyofwhite[0][i][0][0] && copyofblack[0][15][0][1]==copyofwhite[0][i][0][1]){
                     black[1][15].push_back({copyofblack[0][15][0][0]-j-1,copyofblack[0][15][0][1] });
-                    freespace1 = false;
+                    break;
                 }
-                else if(copyofblack[0][15][0][1]-j-1==copyofwhite[0][i][0][1] && copyofblack[0][15][0][0]==copyofwhite[0][i][0][0] && freespace2){
-                    black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] -j-1});
-                    freespace2 = false;
-                }
+                black[1][15].push_back({copyofblack[0][15][0][0] -j-1,copyofblack[0][15][0][1] });
             }
-            else if (copyofblack[0][15][0][0] +j+1 <=7 ){
-                if(copyofblack[0][15][0][0]+j+1==copyofwhite[0][i][0][0] && copyofblack[0][15][0][1]==copyofwhite[0][i][0][1] && freespace3){
+            for (int i = 0; i < 16; i++){
+                if(copyofblack[0][15][0][1]-j-1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0]){
+                    break;
+                }
+                else if(copyofblack[0][15][0][1]-j-1==copyofwhite[0][i][0][1] && copyofblack[0][15][0][0]==copyofwhite[0][i][0][0]){
+                    black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] -j-1});
+                    break;
+                }
+                black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] -j-1});
+            }
+        }
+        else if (copyofblack[0][15][0][0] +j+1 <=7 ){
+            for (int i = 0; i < 16; i++){
+                if(copyofblack[0][15][0][0]+j+1==copyofblack[0][i][0][0] && copyofblack[0][15][0][1]==copyofblack[0][i][0][1]){
+                    break;
+                }
+                else if(copyofblack[0][15][0][0]+j+1==copyofwhite[0][i][0][0] && copyofblack[0][15][0][1]==copyofwhite[0][i][0][1] && freespace3){
                     black[1][15].push_back({copyofblack[0][15][0][0]+j+1,copyofblack[0][15][0][1] });
-                    freespace3 = false;
+                    break;
+                }
+                black[1][15].push_back({copyofblack[0][15][0][0] +j+1,copyofblack[0][15][0][1] });
+            }
+            for (int i = 0; i < 16; i++){
+                if(copyofblack[0][15][0][1]+j+1==copyofblack[0][i][0][1] && copyofblack[0][15][0][0]==copyofblack[0][i][0][0]){
+                    break;
                 }
                 else if(copyofblack[0][15][0][1]+j+1==copyofwhite[0][i][0][1] && copyofblack[0][15][0][0]==copyofwhite[0][i][0][0] && freespace4){
                     black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] +j+1});
-                    freespace4 = false;
+                    break;
                 }
+                black[1][15].push_back({copyofblack[0][15][0][0],copyofblack[0][15][0][1] +j+1});
             }
-        }
+        }  
     }
 
     tuple<vector <vector<vector<vector<int>>>>, vector <vector<vector<vector<int>>>>> tp= {white,black};
