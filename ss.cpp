@@ -1,9 +1,13 @@
 #include<iostream>
 
+using namespace std;
+
+
+
+
 int main(){
-    for( std::size_t j =0; j<7; j++){
-        std::cout << j;
-        
-    }
+
+    char str = 'D';
+    cout << (-1)%0;
     return 0;
 }
