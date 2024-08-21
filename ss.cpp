@@ -1,4 +1,5 @@
 #include<iostream>
+#include <vector>
 
 using namespace std;
 
@@ -7,7 +8,7 @@ using namespace std;
 
 int main(){
 
-    char str = 'D';
-    cout << (-1)%0;
-    return 0;
+    vector <int> a = {1,2,3,4,5,6,7};
+    
+    a.erase(a.begin()+3);
 }
