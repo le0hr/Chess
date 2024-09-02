@@ -1,19 +1,23 @@
 {
+    "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
-        "random": "cpp",
         "tuple": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "span": "cpp",
+        "string": "cpp",
+        "format": "cpp",
         "vector": "cpp",
         "*.tcc": "cpp",
-        "deque": "cpp",
-        "string": "cpp",
-        "unordered_map": "cpp",
-        "system_error": "cpp",
-        "array": "cpp",
         "memory": "cpp",
         "istream": "cpp",
         "functional": "cpp",
         "utility": "cpp",
-        "string_view": "cpp",
-        "initializer_list": "cpp"
+        "variant": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp",
+        "random": "cpp",
+        "text_encoding": "cpp"
     }
 }
