@@ -1,16 +1,25 @@
 #include<vector>
 #include<iostream>
 #include <tuple>
+#include <math.h>
 using namespace std;
 
-
-std::tuple <int, int> a = {55, 55};
 bool InRange(int a, int b, int c) {
-    if (a >= b && a <= c) {
-        return true;
+    if(b <=c){
+        if (a >= b && a <= c) {
+            return true;
+        }
+        else {
+            return false;
+        }   
     }
-    else {
-        return false;
+    else{
+        if (a <= b && a >= c) {
+            return true;
+        }
+        else {
+            return false;
+        }   
     }
 }
 class WPawn; class WRook; class WKnight; class WBishop; class WQueen; class WKing;
@@ -20,8 +29,9 @@ class WPawn
 public:
     tuple<int, int> coordinates = { 0,6 };
     vector<vector<int>> Predicthion = { {0,5, 1}, {0,4, 1} };
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> BDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         if (get<1>(coordinates) == 6 && Board[get<1>(coordinates) - 2][get<0>(coordinates)] == '.') {
             Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) - 2 });
         }
@@ -31,10 +41,19 @@ public:
         if ((get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) - 1 >= 0) && InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) - 1], (int)'a', (int)'z')) {
             Predicthion.push_back({ {get<0>(coordinates) - 1, get<1>(coordinates) - 1} });
         }
+        else if((get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) - 1 >= 0) && InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) - 1], (int)'A', (int)'Z'))
+        {
+            BDead[get<1>(coordinates)][get<0>(coordinates)] = 'X';
+        }
         if ((get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) + 1 <= 7) && InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) + 1], (int)'a', (int)'z')) {
             Predicthion.push_back({ {get<0>(coordinates) + 1, get<1>(coordinates) - 1} });
         }
-        return Predicthion;
+        else if((get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) + 1 <=7) && InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) + 1], (int)'A', (int)'Z'))
+        {
+            BDead[get<1>(coordinates)][get<0>(coordinates)] = 'X';
+        }
+        a = {Predicthion, BDead};
+        return a;
     }
 
 
@@ -46,8 +65,9 @@ private:
 public:
     tuple<int, int> coordinates = { 0,1 };
     vector<vector<int>> Predicthion = { {0,2}, {0,3} };
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> WDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         if (get<1>(coordinates) == 1 && Board[get<1>(coordinates) + 2][get<0>(coordinates)] == '.') {
             Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) + 2 });
         }
@@ -57,10 +77,19 @@ public:
         if ((get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) - 1 >= 0) && InRange((int)Board[get<1>(coordinates) + 1][get<0>(coordinates) - 1], (int)'A', (int)'Z')) {
             Predicthion.push_back({ {get<0>(coordinates) - 1, get<1>(coordinates) + 1} });
         }
+        else if((get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) - 1 >= 0) && InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) - 1], (int)'a', (int)'z'))
+        {
+            WDead[get<1>(coordinates)][get<0>(coordinates)] = 'X';
+        }
         if ((get<0>(coordinates) + 1 <= 7 && get<1>(coordinates) + 1 <= 7) && InRange((int)Board[get<1>(coordinates) + 1][get<0>(coordinates) + 1], (int)'A', (int)'Z')) {
             Predicthion.push_back({ {get<0>(coordinates) + 1, get<1>(coordinates) + 1} });
         }
-        return Predicthion;
+        else if((get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) + 1 <=7) && InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) + 1], (int)'a', (int)'z'))
+        {
+            WDead[get<1>(coordinates)][get<0>(coordinates)] = 'X';
+        }
+        a = {Predicthion, WDead};
+        return a;
     }
 };
 
@@ -68,8 +97,9 @@ class WRook {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> BDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         for (int i = 1; i < 8; i++) {
             if (get<0>(coordinates) - i < 0) {
                 break;
@@ -79,9 +109,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '#') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) - i] == '.') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) });
             }
 
@@ -95,9 +127,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '#') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) + i] == '.') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) });
             }
 
@@ -111,9 +145,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates)], (int)'A', (int)'Z') || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '#') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates)] == '.') {
+                BDead[get<1>(coordinates) - i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) - i });
             }
 
@@ -127,14 +163,17 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates)], (int)'A', (int)'Z') || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '#') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates)] == '.') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) + i });
             }
 
         }
-        return Predicthion;
+        a = {Predicthion, BDead};
+        return a;
     }
 };
 
@@ -142,8 +181,9 @@ class BRook {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> WDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         for (int i = 1; i < 8; i++) {
             if (get<0>(coordinates) - i < 0) {
                 break;
@@ -153,9 +193,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) - i], (int)'a', (int)'z') || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '#') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) - i] == '.') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) });
             }
 
@@ -169,9 +211,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) + i], (int)'a', (int)'z') || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '#') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) + i] == '.') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) });
             }
 
@@ -185,9 +229,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates)], (int)'a', (int)'z') || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '#') {
+                WDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates)] == '.') {
+                WDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) - i });
             }
 
@@ -201,14 +247,17 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates)], (int)'a', (int)'z') || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '#') {
+                WDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates)] == '.') {
+                WDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) + i });
             }
 
         }
-        return Predicthion;
+        a = {Predicthion, WDead};
+        return a;
     }
 };
 
@@ -216,8 +265,9 @@ class WKnight {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> BDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         if ((get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) - 2 >= 0) && (Board[get<1>(coordinates) - 1][get<0>(coordinates) - 2] == '.' || InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) - 2], (int)'a', (int)'z'))) {
             Predicthion.push_back({ get<0>(coordinates) - 2, get<1>(coordinates) - 1 });
         }
@@ -242,7 +292,33 @@ public:
         if ((get<1>(coordinates) + 2 <= 7 && get<0>(coordinates) + 1 <= 7) && (Board[get<1>(coordinates) + 2][get<0>(coordinates) + 1] == '.' || InRange((int)Board[get<1>(coordinates) + 2][get<0>(coordinates) + 1], (int)'a', (int)'z'))) {
             Predicthion.push_back({ get<0>(coordinates) + 1, get<1>(coordinates) + 2 });
         }
-        return Predicthion;
+       
+        if (get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) - 2 >= 0){
+            BDead[get<1>(coordinates)-1][get<0>(coordinates) - 2] = 'X';
+        }
+        if (get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) - 2 >= 0){
+            BDead[get<1>(coordinates)+1][get<0>(coordinates) - 2] = 'X';
+        }
+        if (get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) + 2 <= 7){
+            BDead[get<1>(coordinates)-1][get<0>(coordinates) + 2] = 'X';
+        }
+        if (get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) + 2 <= 7){
+            BDead[get<1>(coordinates)+1][get<0>(coordinates) + 2] = 'X';
+        }
+        if (get<1>(coordinates) - 2 >= 0 && get<0>(coordinates) - 1 >= 0){
+            BDead[get<1>(coordinates)-2][get<0>(coordinates) - 1] = 'X';
+        }
+        if (get<1>(coordinates) + 2 <= 7 && get<0>(coordinates) - 1 >= 0){
+            BDead[get<1>(coordinates)+2][get<0>(coordinates) - 1] = 'X';
+        }
+        if (get<1>(coordinates) - 2 >=0 && get<0>(coordinates) - 1 >= 0){
+            BDead[get<1>(coordinates)-2][get<0>(coordinates) + 1] = 'X';
+        }
+        if (get<1>(coordinates) + 2 <= 7 && get<0>(coordinates) + 1 <= 7){
+            BDead[get<1>(coordinates)+2][get<0>(coordinates) + 1] = 'X';
+        }
+        a = {Predicthion, BDead};
+        return a;
     }
 
 };
@@ -251,8 +327,9 @@ class BKnight {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> WDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         if ((get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) - 2 >= 0) && (Board[get<1>(coordinates) - 1][get<0>(coordinates) - 2] == '.' || InRange((int)Board[get<1>(coordinates) - 1][get<0>(coordinates) - 2], (int)'A', (int)'Z'))) {
             Predicthion.push_back({ get<0>(coordinates) - 2, get<1>(coordinates) - 1 });
         }
@@ -278,7 +355,33 @@ public:
         if ((get<1>(coordinates) + 2 <= 7 && get<0>(coordinates) + 1 <= 7) && (Board[get<1>(coordinates) + 2][get<0>(coordinates) + 1] == '.' || InRange((int)Board[get<1>(coordinates) + 2][get<0>(coordinates) + 1], (int)'A', (int)'Z'))) {
             Predicthion.push_back({ get<0>(coordinates) + 1, get<1>(coordinates) + 2 });
         }
-        return Predicthion;
+
+        if (get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) - 2 >= 0){
+            WDead[get<1>(coordinates)-1][get<0>(coordinates) - 2] = 'X';
+        }
+        if (get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) - 2 >= 0){
+            WDead[get<1>(coordinates)+1][get<0>(coordinates) - 2] = 'X';
+        }
+        if (get<1>(coordinates) - 1 >= 0 && get<0>(coordinates) + 2 <= 7){
+            WDead[get<1>(coordinates)-1][get<0>(coordinates) + 2] = 'X';
+        }
+        if (get<1>(coordinates) + 1 <= 7 && get<0>(coordinates) + 2 <= 7){
+            WDead[get<1>(coordinates)+1][get<0>(coordinates) + 2] = 'X';
+        }
+        if (get<1>(coordinates) - 2 >= 0 && get<0>(coordinates) - 1 >= 0){
+            WDead[get<1>(coordinates)-2][get<0>(coordinates) - 1] = 'X';
+        }
+        if (get<1>(coordinates) + 2 <= 7 && get<0>(coordinates) - 1 >= 0){
+            WDead[get<1>(coordinates)+2][get<0>(coordinates) - 1] = 'X';
+        }
+        if (get<1>(coordinates) - 2 >=0 && get<0>(coordinates) - 1 >= 0){
+            WDead[get<1>(coordinates)-2][get<0>(coordinates) + 1] = 'X';
+        }
+        if (get<1>(coordinates) + 2 <= 7 && get<0>(coordinates) + 1 <= 7){
+            WDead[get<1>(coordinates)+2][get<0>(coordinates) + 1] = 'X';
+        }
+        a = {Predicthion, WDead};
+        return a;
     }
 
 };
@@ -287,8 +390,9 @@ class WBishop {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> BDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         for (int i = 1; i < 8; i++) {
             if (get<0>(coordinates) - i < 0 || get<1>(coordinates) - i < 0) {
                 break;
@@ -298,9 +402,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '#') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)-i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '.') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)-i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) - i });
             }
 
@@ -314,9 +420,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '#') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)+i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '.') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)+i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) - i });
             }
 
@@ -330,9 +438,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '#') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)+i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '.') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)+i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) + i });
             }
 
@@ -346,15 +456,17 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '#') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)-i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '.') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)-i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) + i });
             }
 
         }
-
-        return Predicthion;
+        a = {Predicthion, BDead};
+        return a;
     }
 };
 
@@ -362,8 +474,9 @@ class BBishop {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> WDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         for (int i = 1; i < 8; i++) {
             if (get<1>(coordinates) - i < 0 || get<0>(coordinates) - i < 0) {
                 break;
@@ -373,9 +486,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) - i], (int)'a', (int)'z') || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '#') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '.') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) - i });
             }
 
@@ -389,9 +504,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) + i], (int)'a', (int)'z') || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '#') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '.') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) - i });
             }
 
@@ -405,9 +522,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) - i], (int)'a', (int)'z') || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '#') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '.') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) + i });
             }
 
@@ -421,14 +540,17 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) + i], (int)'a', (int)'z') || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '#') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '.') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) + i });
             }
 
         }
-        return Predicthion;
+        a = {Predicthion, WDead};
+        return a;
     }
 };
 
@@ -436,8 +558,9 @@ class WQueen {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> BDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         for (int i = 1; i < 8; i++) {
             if (get<0>(coordinates) - i < 0 || get<1>(coordinates) - i < 0) {
                 break;
@@ -447,9 +570,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '#') {
+                BDead[get<1>(coordinates) - i][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '.') {
+                BDead[get<1>(coordinates) - i][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) - i });
             }
 
@@ -463,9 +588,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '#') {
+                BDead[get<1>(coordinates) - i][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '.') {
+                BDead[get<1>(coordinates) - i][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) - i });
             }
 
@@ -479,9 +606,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '#') {
+                BDead[get<1>(coordinates) + i][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '.') {
+                BDead[get<1>(coordinates) + i][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) + i });
             }
 
@@ -495,9 +624,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '#') {
+                BDead[get<1>(coordinates) + i][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '.') {
+                BDead[get<1>(coordinates) + i][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) + i });
             }
 
@@ -511,9 +642,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '#') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) - i] == '.') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) });
             }
 
@@ -527,9 +660,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '#') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) + i] == '.') {
+                BDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) });
             }
 
@@ -543,9 +678,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates)], (int)'A', (int)'Z') || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '#') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates)] == '.') {
+                BDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) - i });
             }
 
@@ -559,14 +696,17 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates)], (int)'A', (int)'Z') || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '#') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates)] == '.') {
+                BDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) + i });
             }
 
         }
-        return Predicthion;
+        a = {Predicthion, BDead};
+        return a;
     }
 
 };
@@ -575,8 +715,9 @@ class BQueen {
 public:
     tuple<int, int> coordinates = { 0,0 };
     vector<vector<int>> Predicthion;
-    vector<vector<int>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board) {
+    tuple<vector<vector<int>>, vector<vector<char>>> predicthion(tuple<int, int> coordinates, vector<vector<char>> Board, vector<vector<char>> WDead) {
         vector<vector<int>> Predicthion;
+        tuple<vector<vector<int>>, vector<vector<char>>> a;
         for (int i = 1; i < 8; i++) {
             if (get<1>(coordinates) - i < 0 || get<0>(coordinates) - i < 0) {
                 break;
@@ -586,9 +727,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) - i], (int)'a', (int)'z') || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '#') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) - i] == '.') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) - i });
             }
 
@@ -602,9 +745,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates) + i], (int)'a', (int)'z') || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '#') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates) + i] == '.') {
+                WDead[get<1>(coordinates) - i][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) - i });
             }
 
@@ -618,9 +763,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) - i], (int)'a', (int)'z') || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '#') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) - i] == '.') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) + i });
             }
 
@@ -634,9 +781,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates) + i], (int)'a', (int)'z') || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '#') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates) + i] == '.') {
+                WDead[get<1>(coordinates) + i][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) + i });
             }
 
@@ -650,9 +799,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) - i], (int)'a', (int)'z') || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) - i] == '#') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) - i] == '.') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) - i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) - i, get<1>(coordinates) });
             }
 
@@ -666,9 +817,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates)][get<0>(coordinates) + i], (int)'a', (int)'z') || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '@' || Board[get<1>(coordinates)][get<0>(coordinates) + i] == '#') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates)][get<0>(coordinates) + i] == '.') {
+                WDead[get<1>(coordinates)][get<0>(coordinates) + i] = 'X';
                 Predicthion.push_back({ get<0>(coordinates) + i, get<1>(coordinates) });
             }
 
@@ -682,9 +835,11 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) - i][get<0>(coordinates)], (int)'a', (int)'z') || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) - i][get<0>(coordinates)] == '#') {
+                WDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) - i][get<0>(coordinates)] == '.') {
+                WDead[get<1>(coordinates)-i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) - i });
             }
 
@@ -698,14 +853,17 @@ public:
                 break;
             }
             if (InRange(Board[get<1>(coordinates) + i][get<0>(coordinates)], (int)'a', (int)'z') || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '@' || Board[get<1>(coordinates) + i][get<0>(coordinates)] == '#') {
+                WDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 break;
             }
             if (Board[get<1>(coordinates) + i][get<0>(coordinates)] == '.') {
+                WDead[get<1>(coordinates)+i][get<0>(coordinates)] = 'X';
                 Predicthion.push_back({ get<0>(coordinates), get<1>(coordinates) + i });
             }
 
         }
-        return Predicthion;
+        a = {Predicthion, WDead};
+        return a;
     }
 };
 
@@ -780,181 +938,451 @@ public:
 };
 
 
-vector<vector<char>> BDeadSquares(vector <BPawn> BPawns, vector <BRook> BRooks, vector <BKnight> BKnights, vector <BBishop> BBishops, vector<BQueen> BQueens, vector <BKing> BKings, vector <WPawn> WPawns, vector <WRook> WRooks, vector <WKnight> WKnights, vector <WBishop> WBishops, vector<WQueen> WQueens, vector <WKing> WKings) {
-    vector < vector <char> > DeadBoard = { {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.', '.'} };
-    for (size_t i = 0; i < WPawns.size(); i++)
-    {
-        if (get<1>(WPawns[i].coordinates) - 1 < 8 && get<0>(WPawns[i].coordinates) + 1 < 8) {
-            DeadBoard[get<1>(WPawns[i].coordinates) - 1][get<0>(WPawns[i].coordinates) + 1] = 'X';
-        }
-        if (get<1>(BPawns[i].coordinates) - 1 < 8 && get<0>(BPawns[i].coordinates) - 1 >= 0) {
-            DeadBoard[get<1>(WPawns[i].coordinates) - 1][get<0>(WPawns[i].coordinates) - 1] = 'X';
-        }
-    }
+vector<vector<char>> BDeadSquares(vector <BPawn> BPawns, vector <BRook> BRooks, vector <BKnight> BKnights, vector <BBishop> BBishops, vector<BQueen> BQueens, vector <BKing> BKings, vector < vector <char> > DeadBoard) {
+
     for (size_t i = 0; i < BPawns.size(); i++)
     {
         DeadBoard[get<1>(BPawns[i].coordinates)][get<0>(BPawns[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < WRooks.size(); i++)
-    {
-        for (size_t j = 0; j < WRooks[i].Predicthion.size(); j++)
-        {
-            DeadBoard[WRooks[i].Predicthion[j][1]][WRooks[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < BRooks.size(); i++)
     {
         DeadBoard[get<1>(BRooks[i].coordinates)][get<0>(BRooks[i].coordinates)] = 'X';
-    }
-
-    for (size_t i = 0; i < WKnights.size(); i++)
-    {
-        for (size_t j = 0; j < WKnights[i].Predicthion.size(); j++)
-        {
-            DeadBoard[WKnights[i].Predicthion[j][1]][WKnights[i].Predicthion[j][0]] = 'X';
-        }
     }
     for (size_t i = 0; i < BKnights.size(); i++)
     {
         DeadBoard[get<1>(BKnights[i].coordinates)][get<0>(BKnights[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < WBishops.size(); i++)
-    {
-        for (size_t j = 0; j < WBishops[i].Predicthion.size(); j++)
-        {
-            DeadBoard[WBishops[i].Predicthion[j][1]][WBishops[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < BBishops.size(); i++)
     {
         DeadBoard[get<1>(BBishops[i].coordinates)][get<0>(BBishops[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < WQueens.size(); i++)
-    {
-        for (size_t j = 0; j < WQueens[i].Predicthion.size(); j++) {
-            DeadBoard[WQueens[i].Predicthion[j][1]][WQueens[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < BQueens.size(); i++)
     {
         DeadBoard[get<1>(BQueens[i].coordinates)][get<0>(BQueens[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < WKings.size(); i++)
-    {
-        for (size_t j = 0; j < WKings[i].Predicthion.size(); j++) {
-            DeadBoard[WKings[i].Predicthion[j][1]][WKings[i].Predicthion[j][0]] = 'X';
-        }
-    }
-    for (size_t i = 0; i < BKings.size(); i++)
-    {
-        DeadBoard[get<1>(BKings[i].coordinates)][get<0>(BKings[i].coordinates)] = 'X';
-    }
     return DeadBoard;
 }
 
-vector<vector<char>> WDeadSquares(vector <BPawn> BPawns, vector <BRook> BRooks, vector <BKnight> BKnights, vector <BBishop> BBishops, vector<BQueen> BQueens, vector <BKing> BKings, vector <WPawn> WPawns, vector <WRook> WRooks, vector <WKnight> WKnights, vector <WBishop> WBishops, vector<WQueen> WQueens, vector <WKing> WKings) {
-    vector < vector <char> > DeadBoard = { {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.','.'},
-                                        {'.','.','.','.','.','.','.', '.'} };
-    for (size_t i = 0; i < BPawns.size(); i++)
-    {
-        if (get<1>(BPawns[i].coordinates) + 1 < 8 && get<0>(BPawns[i].coordinates) + 1 < 8) {
-            DeadBoard[get<1>(BPawns[i].coordinates) + 1][get<0>(BPawns[i].coordinates) + 1] = 'X';
-        }
-        if (get<1>(BPawns[i].coordinates) + 1 < 8 && get<0>(BPawns[i].coordinates) -1 >= 0) {
-            DeadBoard[get<1>(BPawns[i].coordinates) + 1][get<0>(BPawns[i].coordinates) - 1] = 'X';
-        }
-    }
+vector<vector<char>> WDeadSquares(vector <WPawn> WPawns, vector <WRook> WRooks, vector <WKnight> WKnights, vector <WBishop> WBishops, vector<WQueen> WQueens, vector <WKing> WKings, vector < vector <char> > DeadBoard) {
+
+
     for (size_t i = 0; i < WPawns.size(); i++) {
         DeadBoard[get<1>(WPawns[i].coordinates)][get<0>(WPawns[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < BRooks.size(); i++)
-    {
-        for (size_t j = 0; j < BRooks[i].Predicthion.size(); j++)
-        {
-            DeadBoard[BRooks[i].Predicthion[j][1]][BRooks[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < WRooks.size(); i++)
     {
         DeadBoard[get<1>(WRooks[i].coordinates)][get<0>(WRooks[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < BKnights.size(); i++)
-    {
-        for (size_t j = 0; j < BKnights[i].Predicthion.size(); j++)
-        {
-            DeadBoard[BKnights[i].Predicthion[j][1]][BKnights[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < WKnights.size(); i++)
     {
         DeadBoard[get<1>(WKnights[i].coordinates)][get<0>(WKnights[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < BBishops.size(); i++)
-    {
-        for (size_t j = 0; j < BBishops[i].Predicthion.size(); j++)
-        {
-            DeadBoard[BBishops[i].Predicthion[j][1]][BBishops[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < WBishops.size(); i++)
     {
         DeadBoard[get<1>(WBishops[i].coordinates)][get<0>(WBishops[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < BQueens.size(); i++)
-    {
-        for (size_t j = 0; j < BQueens[i].Predicthion.size(); j++)
-        {
-            DeadBoard[BQueens[i].Predicthion[j][1]][BQueens[i].Predicthion[j][0]] = 'X';
-        }
-    }
     for (size_t i = 0; i < WQueens.size(); i++)
     {
         DeadBoard[get<1>(WQueens[i].coordinates)][get<0>(WQueens[i].coordinates)] = 'X';
     }
 
-    for (size_t i = 0; i < BKings.size(); i++)
-    {
-        for (size_t j = 0; j < BKings[i].Predicthion.size(); j++)
-        {
-            DeadBoard[BKings[i].Predicthion[j][1]][BKings[i].Predicthion[j][0]] = 'X';
-        }
-    }
-    for (size_t i = 0; i < WKings.size(); i++)
-    {
-        DeadBoard[get<1>(WKings[i].coordinates)][get<0>(WKings[i].coordinates)] = 'X';
-    }
     return DeadBoard;
 }
 
+tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>> WMorph (vector<WPawn> WPawns, vector<WRook> WRooks, vector<WKnight> WKnights, vector<WBishop> WBishops , vector<WQueen> WQueens){
+    for (size_t i = 0; i < WPawns.size(); i++){
+        if (get<1>(WPawns[i].coordinates) == 0){
+            int askedFigure;
+            bool InvalidNum = 1;
+            while (InvalidNum){
+                cout << "Choose your figure (enter number):" << "\n"<< "1.Knight" << "\t" << "2.Bishop" << "\t" << "3.Rook" << "\t" << "4.Queen" << "\n";
+                cin >> askedFigure;
+                switch(askedFigure){
+                case 1:   //Knight
+                    {
+                        WKnight Kn1;
+                        get<0>(Kn1.coordinates) = get<0>(WPawns[i].coordinates);
+                        get<1>(Kn1.coordinates) = get<1>(WPawns[i].coordinates);
+                        WKnights.push_back(Kn1);
+                        InvalidNum = 0;
+                        break;
+                    }
+                case 2:   //Bishop
+                    {
+                        WBishop B1;
+                        get<0>(B1.coordinates) = get<0>(WPawns[i].coordinates);
+                        get<1>(B1.coordinates) = get<1>(WPawns[i].coordinates);
+                        WBishops.push_back(B1);
+                        InvalidNum = 0;
+                        break;
+                    }
+                case 3:   //Rook
+                    {
+                        WRook R1;
+                        get<0>(R1.coordinates) = get<0>(WPawns[i].coordinates);
+                        get<1>(R1.coordinates) = get<1>(WPawns[i].coordinates);
+                        WRooks.push_back(R1);
+                        InvalidNum = 0;
+                        break;
+                    }
+                case 4:   //Queen
+                    {
+                        WQueen Q1;
+                        get<0>(Q1.coordinates) = get<0>(WPawns[i].coordinates);
+                        get<1>(Q1.coordinates) = get<1>(WPawns[i].coordinates);
+                        WQueens.push_back(Q1);
+                        InvalidNum = 0;
+                        break;
+                    }   
+                default:
+                    cout << "Invalid figure";
+                };
+            }
+            WPawns.erase(WPawns.begin() + i);
+            tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>> a = {WPawns, WRooks, WKnights, WBishops, WQueens};
+            return a;
+        }
+    }
+}
 
+tuple <vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQueen>> BMorph (vector<BPawn> BPawns, vector<BRook> BRooks, vector<BKnight> BKnights, vector<BBishop> BBishops , vector<BQueen> BQueens){
+    for (size_t i = 0; i < BPawns.size(); i++){
+        if (get<1>(BPawns[i].coordinates) == 7){
+            int askedFigure;
+            bool InvalidNum = 1;
+            while (InvalidNum){
+                cout << "Choose your figure (enter number):" << "\n"<< "1.Knight" << "\t" << "2.Bishop" << "\t" << "3.Rook" << "\t" << "4.Queen" << "\n";
+                cin >> askedFigure;
+                switch(askedFigure){
+                case 1:   //Knight
+                    {
+                        BKnight Kn1;
+                        get<0>(Kn1.coordinates) = get<0>(BPawns[i].coordinates);
+                        get<1>(Kn1.coordinates) = get<1>(BPawns[i].coordinates);
+                        BKnights.push_back(Kn1);
+                        InvalidNum = 0;
+                        break;
+                    }   
+                case 2:   //Bishop
+                    {
+                        BBishop B1;
+                        get<0>(B1.coordinates) = get<0>(BPawns[i].coordinates);
+                        get<1>(B1.coordinates) = get<1>(BPawns[i].coordinates);
+                        BBishops.push_back(B1);
+                        InvalidNum = 0;
+                        break;
+                    }   
+                case 3:   //Rook
+                    {
+                        BRook R1;
+                        get<0>(R1.coordinates) = get<0>(BPawns[i].coordinates);
+                        get<1>(R1.coordinates) = get<1>(BPawns[i].coordinates);
+                        BRooks.push_back(R1);
+                        InvalidNum = 0;
+                        break;
+                    }       
+                case 4:   //Queen
+                    {
+                        BQueen Q1;
+                        get<0>(Q1.coordinates) = get<0>(BPawns[i].coordinates);
+                        get<1>(Q1.coordinates) = get<1>(BPawns[i].coordinates);
+                        BQueens.push_back(Q1);
+                        InvalidNum = 0;
+                        break;
+                    }       
+                default:
+                    cout << "Invalid figure";
+                };
+            }
+            BPawns.erase(BPawns.begin() + i);
+            tuple <vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQueen>> a = {BPawns, BRooks, BKnights, BBishops, BQueens};
+            return a;
+        }
+    }
+}
+
+tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector<WKing>>eterethion (vector <WPawn> WPawns, vector <WRook> WRooks, vector <WKnight> WKnights, vector <WBishop> WBishops, vector<WQueen> WQueens, vector <WKing> WKings, vector<vector<char>> Board){
+    vector<vector<int>> atackers;
+    for (int i = 1; i < 8; i++) {
+        if (get<1>(WKings[0].coordinates) - i < 0 || get<0>(WKings[0].coordinates) - i < 0) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) - i] == 'b' || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) - i] == 'q') {
+            atackers.push_back({get<0>(WKings[0].coordinates) - i, get<1>(WKings[0].coordinates) - i,  (int) Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) - i] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) - i] == '@' || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) - i] == '#') {
+            break;
+        }
+
+    }
+    for (int i = 1; i < 8; i++) {
+        if (get<1>(WKings[0].coordinates) + i > 7 || get<0>(WKings[0].coordinates) - i < 0) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) - i] == 'b' || Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) - i] == 'q') {
+            atackers.push_back({get<0>(WKings[0].coordinates) - i, get<1>(WKings[0].coordinates) + i,  (int) Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) - i] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) - i] == '@' || Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) - i] == '#') {
+            break;
+        }
+
+    }
+    for (int i = 1; i < 8; i++) {
+        if (get<1>(WKings[0].coordinates) + i > 7 || get<0>(WKings[0].coordinates) + i > 0) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) + i] == 'b' || Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) + i] == 'q') {
+            atackers.push_back({get<0>(WKings[0].coordinates) + i, get<1>(WKings[0].coordinates) + i,  (int) Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) + i] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) + i] == '@' || Board[get<1>(WKings[0].coordinates) + i][get<0>(WKings[0].coordinates) + i] == '#') {
+            break;
+        }
+
+    }
+
+    for (int i = 1; i < 8; i++) {
+        if (get<1>(WKings[0].coordinates) - i < 0 || get<0>(WKings[0].coordinates) + i > 7) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) + i] == 'b' || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) + i] == 'q') {
+            atackers.push_back({get<0>(WKings[0].coordinates) + i, get<1>(WKings[0].coordinates) - i,  (int) Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) + i] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) + i] == '@' || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates) + i] == '#') {
+            break;
+        }
+
+    }
+    for (int i = 1; i < 8; i++) {
+        if (get<0>(WKings[0].coordinates) - i < 0) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) - i]== 'r' || Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) - i]== 'q') {
+            atackers.push_back({ get<0>(WKings[0].coordinates) - i, get<1>(WKings[0].coordinates), (int) Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) - i] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) - i], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) - i] == '@' || Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) - i] == '#') {
+            break;
+        }
+
+    }
+    for (int i = 1; i < 8; i++) {
+        if (get<0>(WKings[0].coordinates) + i > 7) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) + i]== 'r' || Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) + i]== 'q') {
+            atackers.push_back({ get<0>(WKings[0].coordinates) + i, get<1>(WKings[0].coordinates), (int) Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) + i] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) + i], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) + i] == '@' || Board[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates) + i] == '#') {
+            break;
+        }
+
+    }
+    for (int i = 1; i < 8; i++) {
+        if (get<1>(WKings[0].coordinates) - i < 0) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates)- i][get<0>(WKings[0].coordinates) ]== 'r' || Board[get<1>(WKings[0].coordinates)- i][get<0>(WKings[0].coordinates) ]== 'q') {
+            atackers.push_back({ get<0>(WKings[0].coordinates) , get<1>(WKings[0].coordinates)- i, (int) Board[get<1>(WKings[0].coordinates)- i][get<0>(WKings[0].coordinates) ] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates)- i][get<0>(WKings[0].coordinates) ], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates) - i][get<0>(WKings[0].coordinates)] == '@' || Board[get<1>(WKings[0].coordinates)- i][get<0>(WKings[0].coordinates) ] == '#') {
+            break;
+        }
+
+    }
+    for (int i = 1; i < 8; i++) {
+        if (get<1>(WKings[0].coordinates) + i > 7) {
+            break;
+        }
+        if (Board[get<1>(WKings[0].coordinates)+ i][get<0>(WKings[0].coordinates) ]== 'r' || Board[get<1>(WKings[0].coordinates)+ i][get<0>(WKings[0].coordinates) ]== 'q') {
+            atackers.push_back({ get<0>(WKings[0].coordinates) , get<1>(WKings[0].coordinates)+ i, (int) Board[get<1>(WKings[0].coordinates)+ i][get<0>(WKings[0].coordinates) ] });
+            break;
+        }
+        if (InRange(Board[get<1>(WKings[0].coordinates)+ i][get<0>(WKings[0].coordinates) ], (int)'A', (int)'Z') || Board[get<1>(WKings[0].coordinates)+ i][get<0>(WKings[0].coordinates) ] == '@' || Board[get<1>(WKings[0].coordinates)+ i][get<0>(WKings[0].coordinates) ] == '#') {
+            break;
+        }
+
+    }
+
+
+
+    if ((get<1>(WKings[0].coordinates) - 1 >= 0 && get<0>(WKings[0].coordinates) - 2 >= 0) && Board[get<1>(WKings[0].coordinates) - 1][get<0>(WKings[0].coordinates) - 2] == 'k' ) {
+        atackers.push_back({ get<0>(WKings[0].coordinates) - 2, get<1>(WKings[0].coordinates) - 1, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) + 1 <= 7 && get<0>(WKings[0].coordinates) - 2 >= 0) && Board[get<1>(WKings[0].coordinates) + 1][get<0>(WKings[0].coordinates) - 2] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) - 2, get<1>(WKings[0].coordinates) + 1, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) - 1 >= 0 && get<0>(WKings[0].coordinates) + 2 <= 7) && Board[get<1>(WKings[0].coordinates) - 1][get<0>(WKings[0].coordinates) + 2] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) + 2, get<1>(WKings[0].coordinates) - 1, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) + 1 <= 7 && get<0>(WKings[0].coordinates) + 2 <= 7) && Board[get<1>(WKings[0].coordinates) + 1][get<0>(WKings[0].coordinates) + 2] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) + 2, get<1>(WKings[0].coordinates) + 1, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) - 2 >= 0 && get<0>(WKings[0].coordinates) - 1 >= 0) && Board[get<1>(WKings[0].coordinates) - 2][get<0>(WKings[0].coordinates) - 1] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) - 1, get<1>(WKings[0].coordinates) - 2, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) - 2 >= 0 && get<0>(WKings[0].coordinates) + 1 <= 7) && Board[get<1>(WKings[0].coordinates) - 2][get<0>(WKings[0].coordinates) + 1] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) + 1, get<1>(WKings[0].coordinates) - 2, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) + 2 <= 7 && get<0>(WKings[0].coordinates) - 1 >= 0) && Board[get<1>(WKings[0].coordinates) + 2][get<0>(WKings[0].coordinates) - 1] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) - 1, get<1>(WKings[0].coordinates) + 2, (int)'k' });
+    }
+    if ((get<1>(WKings[0].coordinates) + 2 <= 7 && get<0>(WKings[0].coordinates) + 1 <= 7) && Board[get<1>(WKings[0].coordinates) + 2][get<0>(WKings[0].coordinates) + 1] == 'k') {
+        atackers.push_back({ get<0>(WKings[0].coordinates) + 1, get<1>(WKings[0].coordinates) + 2, (int)'k' });
+    }
+
+    if((get<1>(WKings[0].coordinates) -1 >=0 || get<0>(WKings[0].coordinates) + 1<=7) && Board[get<1>(WKings[0].coordinates) -1][get<0>(WKings[0].coordinates) + 1] == 'p'){
+        atackers.push_back({get<0>(WKings[0].coordinates) + 1, get<1>(WKings[0].coordinates) -1, (int)'p'});
+    }
+    if((get<1>(WKings[0].coordinates) -1 >=0 || get<0>(WKings[0].coordinates) - 1>=0) && Board[get<1>(WKings[0].coordinates) -1][get<0>(WKings[0].coordinates) - 1] == 'p'){
+        atackers.push_back({get<0>(WKings[0].coordinates) + 1, get<1>(WKings[0].coordinates) -1, (int)'p'});
+    }
+
+    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector<WKing>> pieces;
+    if (atackers.size() >1){
+        for(size_t i =0; i < WPawns.size(); i++){
+            WPawns[i].Predicthion = {};
+        }
+        for(size_t i =0; i < WRooks.size(); i++){
+            WRooks[i].Predicthion = {};
+        }
+        for(size_t i =0; i < WKnights.size(); i++){
+            WKnights[i].Predicthion = {};
+        }
+        for(size_t i =0; i < WBishops.size(); i++){
+            WBishops[i].Predicthion = {};
+        }
+        for(size_t i =0; i < WQueens.size(); i++){
+            WQueens[i].Predicthion = {};
+        }
+        pieces = {WPawns, WRooks, WKnights, WBishops, WQueens, WKings};
+        return pieces;
+    }
+    else{
+        vector<WRook> RooksCopy;
+        vector<WBishop> BishopsCopy;
+        vector<WKnight> KnightsCopy;
+        vector<WQueen> QueensCopy;
+        if (atackers[0][2] == (int)'r'){
+            for (size_t j = 0; j < WRooks.size(); j++)
+            {
+                for (size_t i =0; i<WRooks[j].Predicthion.size(); i++){
+                    if ( atackers[0][2] == (int)'r' && (atackers[0][0] == WRooks[j].Predicthion[i][0] && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                        RooksCopy.push_back(WRooks[j]);
+                    }
+                    if (atackers[0][2] == (int)'r' && (atackers[0][1] == WRooks[j].Predicthion[i][1] && InRange(WRooks[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ))){
+                        RooksCopy.push_back(WRooks[j]);
+                    }
+                }
+            }
+        }
+        else if (atackers[0][2] == (int)'b'){
+            for (size_t j = 0; j < WBishops.size(); j++)
+            {
+                for(size_t i = 0; i< WBishops[j].Predicthion.size(); i++){
+                    if ( atackers[0][2] == (int)'b' && (InRange(WBishops[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ) && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) && abs(get<0>(WKings[0].coordinates) - atackers[0][1]) == abs(get<0>(WKings[0].coordinates) - atackers[0][1]))){
+                       BishopsCopy.push_back(WBishops[j]) ;
+                    }
+                }  
+            }
+        }
+        else if (atackers[0][2] == (int)'q'){
+            
+                for (size_t j = 0; j < WQueens.size(); j++){
+                    for(size_t i = 0; i < WQueens[j].Predicthion.size(); i++){
+                        if ( atackers[0][2] == (int)'b' && (InRange(WQueens[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ) && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) && abs(get<0>(WKings[0].coordinates) - atackers[0][1]) == abs(get<0>(WKings[0].coordinates) - atackers[0][1]))){
+                            QueensCopy.push_back(WQueens[j]);
+                        }
+
+                        if (atackers[0][2] == (int)'q' && (atackers[0][0] == WQueens[j].Predicthion[i][0] && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                            QueensCopy.push_back(WQueens[j]);
+                        }
+
+                        if (atackers[0][2] == (int)'q' && (atackers[0][1] == WQueens[j].Predicthion[i][1] && InRange(WQueens[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ))){
+                            QueensCopy.push_back(WQueens[j]);
+                        }
+                    }
+                }
+            }
+        }
+        for (size_t j = 0; j < WPawns.size(); j++)
+        {
+            for (size_t i = 0; i <WPawns[j].Predicthion.size(); i++){
+                if ((WPawns[j].Predicthion[0][0] == atackers[0][0] && WPawns[j].Predicthion[0][1] == atackers[0][1])){
+                    ;
+                }
+                else{
+                    WPawns[j].Predicthion.erase(WPawns[j].Predicthion.begin());
+                }
+            }
+        }
+        for (size_t j = 0; j < WRooks.size(); j++)
+        {
+            for (size_t i = 0; i <WRooks[j].Predicthion.size(); i++){
+                if ((WRooks[j].Predicthion[0][0] == atackers[0][0] && WRooks[j].Predicthion[0][1] == atackers[0][1])){
+                    ;
+                }
+                else{
+                    WRooks[j].Predicthion.erase(WRooks[j].Predicthion.begin());
+                }
+            }
+        }
+        for (size_t j = 0; j < WKnights.size(); j++)
+        {
+            for (size_t i = 0; i <WKnights[j].Predicthion.size(); i++){
+                if (!(WKnights[j].Predicthion[0][0] == atackers[0][0] && WKnights[j].Predicthion[0][1] == atackers[0][1])){
+                    ;
+                }
+                else{
+                    WKnights[j].Predicthion.erase(WKnights[j].Predicthion.begin());
+                }
+            }
+        }
+        for (size_t j = 0; j < WBishops.size(); j++)
+        {
+            for (size_t i = 0; i <WBishops[j].Predicthion.size(); i++){
+                if ((WBishops[j].Predicthion[0][0] == atackers[0][0] && WBishops[j].Predicthion[0][1] == atackers[0][1])){
+                    ;
+                }
+                else{
+                    WBishops[j].Predicthion.erase(WBishops[j].Predicthion.begin());
+                }
+            }
+        }
+        for (size_t j = 0; j < WQueens.size(); j++)
+        {
+            for (size_t i = 0; i <WQueens[j].Predicthion.size(); i++){
+                if ((WQueens[j].Predicthion[0][0] == atackers[0][0] && WQueens[j].Predicthion[0][1] == atackers[0][1])){
+                    ;
+                }
+                else{
+                    WQueens[j].Predicthion.erase(WQueens[j].Predicthion.begin());
+                }
+            }
+        }
+        pieces = {WPawns, WRooks, WKnights, WBishops, WQueens, WKings};
+        return pieces;
+    }
+}
+    // После того, как прогрма определит атакующих, нужно проверить их количество, если атакующих 2, и более, нужно удалить все возможные ходы кроме ходов короля, при количстве 
+    // атакующих равнаму 1, нужно найти лишь те ходы, которые перекрывают короля
 
 // дописати класи для слона, короля й королеви
 vector<char> enter() {
     string move;
-    char piece;
-
-    tuple<char, char, int> t = {};
     cin >> move;
     vector<char> data(move.begin(), move.end());
 
@@ -1075,11 +1503,13 @@ vector<WBishop> makeTurn(vector<char> move, vector <WBishop> piece) {
 vector<BQueen> makeTurn(vector<char> move, vector<BQueen> piece) {
     move[1] = ((int)move[1] - 97);
     move[2] = 7 - ((int)move[2] - (int)'1');
-    for (size_t j = 0; j < piece[0].Predicthion.size(); j++) {
-        if (piece[0].Predicthion[j][0] == move[1] && piece[0].Predicthion[j][1] == move[2]) {
-            get<0>(piece[0].coordinates) = move[1];
-            get<1>(piece[0].coordinates) = move[2];
-            return piece;
+    for (size_t i = 0; i < piece.size(); i++) {
+        for (size_t j = 0; j < piece[i].Predicthion.size(); j++) {
+            if (piece[i].Predicthion[j][0] == move[1] && piece[i].Predicthion[j][1] == move[2]) {
+                get<0>(piece[i].coordinates) = move[1];
+                get<1>(piece[i].coordinates) = move[2];
+                return piece;
+            }
         }
     }
 }
@@ -1087,11 +1517,13 @@ vector<BQueen> makeTurn(vector<char> move, vector<BQueen> piece) {
 vector<WQueen> makeTurn(vector<char> move, vector <WQueen> piece) {
     move[1] = ((int)move[1] - 97);
     move[2] = 7 - ((int)move[2] - (int)'1');
-    for (size_t j = 0; j < piece[0].Predicthion.size(); j++) {
-        if (piece[0].Predicthion[j][0] == move[1] && piece[0].Predicthion[j][1] == move[2]) {
-            get<0>(piece[0].coordinates) = move[1];
-            get<1>(piece[0].coordinates) = move[2];
-            return piece;
+    for (size_t i = 0; i < piece.size(); i++) {
+        for (size_t j = 0; j < piece[i].Predicthion.size(); j++) {
+            if (piece[i].Predicthion[j][0] == move[1] && piece[i].Predicthion[j][1] == move[2]) {
+                get<0>(piece[i].coordinates) = move[1];
+                get<1>(piece[i].coordinates) = move[2];
+                return piece;
+            }
         }
     }
 }
@@ -1669,7 +2101,7 @@ vector < vector <char> > render(vector <WPawn> WPawns, vector <BPawn> BPawns, ve
 }
 
 int main() {
-    int Turn = 0;
+    int Turn = 0, wwww = 0;
     vector<vector<char>> trouble1, trouble2;
     WPawn P1, P2, P3, P4, P5, P6, P7, P8; BPawn p1, p2, p3, p4, p5, p6, p7, p8;
     WRook R1, R2; BRook r1, r2;
@@ -1698,12 +2130,36 @@ int main() {
     {'.','.','.','.','.','.','.','.'},
     {'.','.','.','.','.','.','.','.'},
     {'.','.','.','.','.','.','.', '.'} };
+    vector<vector<char>> WDead = { {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','X','X','X','.','.'},
+    {'.','.','.','X','.','X','.', '.'} };
+    vector<vector<char>> BDead = { {'.','.','.','X','.','X','.','.'},
+    {'.','.','.','X','X','X','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.', '.'} };
     tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector <WKing>, vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQueen>, vector<BKing>> A;
+    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>> w;
+    tuple <vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQueen>> b;
+    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector<WKing>> er;
+    tuple<vector<vector<int>>, vector<vector<char>>> func;
     for (int i = 0; i < WKnights.size(); i++) {
-        WKnights[i].Predicthion = WKnights[i].predicthion(WKnights[i].coordinates, board);
+        func = WKnights[i].predicthion(WKnights[i].coordinates, board, BDead);
+        WKnights[i].Predicthion = get<0>(func);
+        BDead = get<1>(func);
     }
     for (int i = 0; i < BKnights.size(); i++) {
-        BKnights[i].Predicthion = BKnights[i].predicthion(BKnights[i].coordinates, board);
+        func = BKnights[i].predicthion(BKnights[i].coordinates, board, WDead);
+        BKnights[i].Predicthion = get<0>(func);
+        WDead = get<1>(func);
     }
     for (int i = 0; i < 8; i++) {
         WPawns[i].coordinates = { i, 6 };
@@ -1717,6 +2173,16 @@ int main() {
     while (true) {
         move = enter();
         if (Turn == 0) {
+            if (WDead[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates)] == 'X'){
+                er = eterethion(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, board);
+                WPawns = get<0>(er);
+                WRooks = get<1>(er);
+                WKnights = get<2>(er);
+                WBishops = get<3>(er);
+                WQueens = get<4>(er);
+                WKings = get<5>(er);
+
+            }
             if (move.size() == 2) {
                 WPawns = makeTurn(move, WPawns);
                 A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WPawn");
@@ -1726,6 +2192,15 @@ int main() {
                 BBishops = get<9>(A);
                 BQueens = get<10>(A);
                 BKings = get<11>(A);
+                if (move[1] == '8'){
+                    w = WMorph(WPawns, WRooks, WKnights, WBishops, WQueens);
+                    WPawns = get<0>(w);
+                    WRooks = get<1>(w);
+                    WKnights = get<2>(w);
+                    WBishops = get<3>(w);
+                    WQueens = get<4>(w);
+                }
+                
                 // функцыя маэ виконуватись першою, пысля чого потрыбно виконувати функцыю  captured, яку потрыбно выдредагувати
             }
             else {
@@ -1785,6 +2260,8 @@ int main() {
 
                 }
             }
+
+            
         }
         else {
             if (move.size() == 2) {
@@ -1796,6 +2273,15 @@ int main() {
                 WBishops = get<3>(A);
                 WQueens = get<4>(A);
                 WKings = get<5>(A);
+
+                if (move[1] =='1'){
+                    b = BMorph(BPawns, BRooks, BKnights, BBishops, BQueens);
+                    BPawns = get<0>(b);
+                    BRooks = get<1>(b);
+                    BKnights = get<2>(b);
+                    BBishops = get<3>(b);
+                    BQueens = get<4>(b);
+                }
 
             }
             else {
@@ -1859,39 +2345,61 @@ int main() {
         }
 
         board = render(WPawns, BPawns, WRooks, BRooks, WKnights, BKnights, WBishops, BBishops, WQueens, BQueens, WKings, BKings, board);
-        for (int i = 0; i < WPawns.size(); i++) {
-            WPawns[i].Predicthion = WPawns[i].predicthion(WPawns[i].coordinates, board);
-        }
-        for (int i = 0; i < BPawns.size(); i++) {
-            BPawns[i].Predicthion = BPawns[i].predicthion(BPawns[i].coordinates, board);
-        }
-        for (int i = 0; i < WRooks.size(); i++) {
-            WRooks[i].Predicthion = WRooks[i].predicthion(WRooks[i].coordinates, board);
-        }
-        for (int i = 0; i < BRooks.size(); i++) {
-            BRooks[i].Predicthion = BRooks[i].predicthion(BRooks[i].coordinates, board);
-        }
-        for (int i = 0; i < WKnights.size(); i++) {
-            WKnights[i].Predicthion = WKnights[i].predicthion(WKnights[i].coordinates, board);
-        }
-        for (int i = 0; i < BKnights.size(); i++) {
-            BKnights[i].Predicthion = BKnights[i].predicthion(BKnights[i].coordinates, board);
-        }
-        for (int i = 0; i < WBishops.size(); i++) {
-            WBishops[i].Predicthion = WBishops[i].predicthion(WBishops[i].coordinates, board);
-        }
-        for (int i = 0; i < BBishops.size(); i++) {
-            BBishops[i].Predicthion = BBishops[i].predicthion(BBishops[i].coordinates, board);
-        }
-        for (int i = 0; i < WQueens.size(); i++) {
-            WQueens[i].Predicthion = WQueens[i].predicthion(WQueens[i].coordinates, board);
-        }
-        for (int i = 0; i < BQueens.size(); i++) {
-            BQueens[i].Predicthion = BQueens[i].predicthion(BQueens[i].coordinates, board);
-        }
-        WKings[0].Predicthion = WKings[0].predicthion(WKings[0].coordinates, board, WDeadSquares(BPawns, BRooks, BKnights, BBishops, BQueens, BKings, WPawns, WRooks, WKnights, WBishops, WQueens, WKings));
-        BKings[0].Predicthion = BKings[0].predicthion(BKings[0].coordinates, board, BDeadSquares(BPawns, BRooks, BKnights, BBishops, BQueens, BKings, WPawns, WRooks, WKnights, WBishops, WQueens, WKings));
 
+         for (int i =0; i < WPawns.size(); i++){
+            func = WPawns[i].predicthion(WPawns[i].coordinates, board, BDead);
+            WPawns[i].Predicthion = get<0>(func);
+            BDead = get<1>(func);
+        }
+        for (int i =0; i < BPawns.size(); i++){
+            func = BPawns[i].predicthion(BPawns[i].coordinates, board, WDead);
+            BPawns[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <WRooks.size(); i++){
+            func = WRooks[i].predicthion(WRooks[i].coordinates, board, BDead);
+            WRooks[i].Predicthion = get<0>(func);
+            BDead = get<1>(func);
+        }
+        for (int i =0; i <BRooks.size(); i++){
+            func = BRooks[i].predicthion(BRooks[i].coordinates, board, WDead);
+            BRooks[i].Predicthion = get<0>(func) ;
+            WDead = get<1>(func);
+        }
+         for (int i =0; i <WKnights.size(); i++){
+            func = WKnights[i].predicthion(WKnights[i].coordinates, board, BDead);
+            WKnights[i].Predicthion = get<0>(func);
+            BDead = get<1>(func);
+        }
+        for (int i =0; i <BKnights.size(); i++){
+            func = BKnights[i].predicthion(BKnights[i].coordinates, board, WDead);
+            BKnights[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <WBishops.size(); i++){
+            func = WBishops[i].predicthion(WBishops[i].coordinates, board, BDead);
+            WBishops[i].Predicthion = get<0>(func);
+            BDead = get<1>(func);
+        }
+        for (int i =0; i <BBishops.size(); i++){
+            func = BBishops[i].predicthion(BBishops[i].coordinates, board, WDead);
+            BBishops[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <WQueens.size(); i++){
+            func = WQueens[i].predicthion(WQueens[i].coordinates, board, BDead);
+            WQueens[i].Predicthion = get<0>(func);
+            BDead = get<1>(func);
+        }
+        for (int i =0; i <BQueens.size(); i++){
+            func = BQueens[i].predicthion(BQueens[i].coordinates, board, WDead);
+            BQueens[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        WDead = WDeadSquares(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, WDead);
+        BDead = BDeadSquares(BPawns, BRooks, BKnights, BBishops, BQueens, BKings, BDead);
+        WKings[0].Predicthion = WKings[0].predicthion(WKings[0].coordinates, board, WDead);
+        BKings[0].Predicthion = BKings[0].predicthion(BKings[0].coordinates, board, BDead);
         Turn = (Turn + 1) % 2;
     }
 
