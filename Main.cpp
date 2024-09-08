@@ -1109,7 +1109,7 @@ tuple <vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQ
     }
 }
 
-tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector<WKing>>eterethion (vector <WPawn> WPawns, vector <WRook> WRooks, vector <WKnight> WKnights, vector <WBishop> WBishops, vector<WQueen> WQueens, vector <WKing> WKings, vector<vector<char>> Board){
+tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>>WEterethion (vector <WPawn> WPawns, vector <WRook> WRooks, vector <WKnight> WKnights, vector <WBishop> WBishops, vector<WQueen> WQueens, vector <WKing> WKings, vector<vector<char>> Board){
     vector<vector<int>> atackers;
     for (int i = 1; i < 8; i++) {
         if (get<1>(WKings[0].coordinates) - i < 0 || get<0>(WKings[0].coordinates) - i < 0) {
@@ -1251,7 +1251,7 @@ tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQ
         atackers.push_back({get<0>(WKings[0].coordinates) + 1, get<1>(WKings[0].coordinates) -1, (int)'p'});
     }
 
-    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector<WKing>> pieces;
+    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>> pieces;
     if (atackers.size() >1){
         for(size_t i =0; i < WPawns.size(); i++){
             WPawns[i].Predicthion = {};
@@ -1268,114 +1268,408 @@ tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQ
         for(size_t i =0; i < WQueens.size(); i++){
             WQueens[i].Predicthion = {};
         }
-        pieces = {WPawns, WRooks, WKnights, WBishops, WQueens, WKings};
+        pieces = {WPawns, WRooks, WKnights, WBishops, WQueens};
         return pieces;
     }
     else{
-        vector<WRook> RooksCopy;
-        vector<WBishop> BishopsCopy;
-        vector<WKnight> KnightsCopy;
-        vector<WQueen> QueensCopy;
+        vector<WPawn> PawnsCopy = WPawns;
+        vector<WRook> RooksCopy= WRooks;
+        vector<WBishop> BishopsCopy = WBishops;
+        vector<WKnight> KnightsCopy = WKnights;
+        vector<WQueen> QueensCopy = WQueens;
         if (atackers[0][2] == (int)'r'){
+            for (size_t j = 0; j < WPawns.size(); j++){
+                PawnsCopy[j].Predicthion = {};
+                if ((get<1>(WPawns[j].coordinates)-1 >=0) 
+                && (atackers[0][0] == get<0>(WPawns[j].coordinates)  == get<0>(WKings[0].coordinates) 
+                && InRange(get<1>(WPawns[j].coordinates)-1, atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+                else if ((get<1>(WPawns[j].coordinates)-1 >=0) 
+                && (atackers[0][1] == get<1>(WPawns[j].coordinates)-1  == get<1>(WKings[0].coordinates)
+                && InRange(get<0>(WPawns[j].coordinates), atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+
+                if ((get<1>(WPawns[j].coordinates) ==6) && (get<1>(WPawns[j].coordinates)-2 >=0) 
+                && (atackers[0][0] == get<0>(WPawns[j].coordinates)  == get<0>(WKings[0].coordinates) 
+                && InRange(get<1>(WPawns[j].coordinates)-2, atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-2});
+                }
+                else if ((get<1>(WPawns[j].coordinates) ==6) && (get<1>(WPawns[j].coordinates)-2 >=0) 
+                && (atackers[0][1] == get<1>(WPawns[j].coordinates)-2  == get<1>(WKings[0].coordinates)
+                && InRange(get<0>(WPawns[j].coordinates), atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-2});
+                }
+            }
             for (size_t j = 0; j < WRooks.size(); j++)
             {
+                RooksCopy[j].Predicthion = {};
                 for (size_t i =0; i<WRooks[j].Predicthion.size(); i++){
-                    if ( atackers[0][2] == (int)'r' && (atackers[0][0] == WRooks[j].Predicthion[i][0] && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
-                        RooksCopy.push_back(WRooks[j]);
+                    if (atackers[0][0] == WRooks[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) )){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
                     }
-                    if (atackers[0][2] == (int)'r' && (atackers[0][1] == WRooks[j].Predicthion[i][1] && InRange(WRooks[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ))){
-                        RooksCopy.push_back(WRooks[j]);
+                    else if (atackers[0][1] == WRooks[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WRooks[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) )){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
                     }
                 }
+
             }
-        }
-        else if (atackers[0][2] == (int)'b'){
             for (size_t j = 0; j < WBishops.size(); j++)
             {
-                for(size_t i = 0; i< WBishops[j].Predicthion.size(); i++){
-                    if ( atackers[0][2] == (int)'b' && (InRange(WBishops[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ) && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) && abs(get<0>(WKings[0].coordinates) - atackers[0][1]) == abs(get<0>(WKings[0].coordinates) - atackers[0][1]))){
-                       BishopsCopy.push_back(WBishops[j]) ;
+                BishopsCopy[j].Predicthion = {};
+                for (size_t i =0; i<WBishops[j].Predicthion.size(); i++){
+                    if (atackers[0][0] == WBishops[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) )){
+                        
                     }
-                }  
+                    else if (atackers[0][1] == WBishops[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WBishops[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) )){
+                        BishopsCopy[j].Predicthion.push_back(WBishops[j].Predicthion[i]);
+                    }
+                }
+
             }
-        }
-        else if (atackers[0][2] == (int)'q'){
-            
-                for (size_t j = 0; j < WQueens.size(); j++){
-                    for(size_t i = 0; i < WQueens[j].Predicthion.size(); i++){
-                        if ( atackers[0][2] == (int)'b' && (InRange(WQueens[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ) && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) && abs(get<0>(WKings[0].coordinates) - atackers[0][1]) == abs(get<0>(WKings[0].coordinates) - atackers[0][1]))){
-                            QueensCopy.push_back(WQueens[j]);
-                        }
-
-                        if (atackers[0][2] == (int)'q' && (atackers[0][0] == WQueens[j].Predicthion[i][0] && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
-                            QueensCopy.push_back(WQueens[j]);
-                        }
-
-                        if (atackers[0][2] == (int)'q' && (atackers[0][1] == WQueens[j].Predicthion[i][1] && InRange(WQueens[j].Predicthion[i][0],atackers[0][1], get<0>(WKings[0].coordinates) ))){
-                            QueensCopy.push_back(WQueens[j]);
-                        }
+            for (size_t j = 0; j < WKnights.size(); j++){
+                KnightsCopy[j].Predicthion = {};
+                for (size_t i =0; i<WKnights[j].Predicthion.size(); i++){
+                    if (atackers[0][0] == WKnights[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WKnights[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) )){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
+                    }
+                    if (atackers[0][1] == WKnights[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WKnights[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) )){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
                     }
                 }
             }
+            for (size_t j = 0; j < WQueens.size(); j++)
+            {
+                QueensCopy[j].Predicthion ={};
+                for (size_t i =0; i<WQueens[j].Predicthion.size(); i++){
+                    if ((atackers[0][0] == WQueens[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+                    if ((atackers[0][1] == WQueens[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WQueens[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+                }
+
+            }
         }
+
+        // не правильно написана частина з модулем
+        else if (atackers[0][2] == (int)'b'){
+            for (size_t j = 0; j < WPawns.size(); j++){
+                PawnsCopy[j].Predicthion = {};
+                if ((InRange(get<0>(WPawns[j].coordinates),atackers[0][0], get<0>(WKings[0].coordinates) )
+                && InRange(get<1>(WPawns[j].coordinates)-1,atackers[0][1], get<1>(WKings[0].coordinates) )
+                && abs(get<1>(WKings[0].coordinates) - (get<1>(WPawns[j].coordinates)-1)) == abs(get<0>(WKings[0].coordinates) - get<0>(WPawns[j].coordinates)))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+                else if ((InRange(get<0>(WPawns[j].coordinates),atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                && InRange(get<1>(WPawns[j].coordinates)-1,atackers[0][1], get<1>(WKings[0].coordinates) )
+                && abs(get<1>(WKings[0].coordinates) - (get<1>(WPawns[j].coordinates)-1)) == abs(get<0>(WKings[0].coordinates) - get<0>(WPawns[j].coordinates)))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+
+                if ((get<1>(WPawns[j].coordinates) == 6) && (InRange(get<0>(WPawns[j].coordinates),atackers[0][0], get<0>(WKings[0].coordinates) )
+                && InRange(get<1>(WPawns[j].coordinates)-2,atackers[0][1], get<1>(WKings[0].coordinates) )
+                && abs(get<1>(WKings[0].coordinates) - (get<1>(WPawns[j].coordinates)-2)) == abs(get<0>(WKings[0].coordinates) - get<0>(WPawns[j].coordinates)))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-2});
+                }
+                else if ((get<1>(WPawns[j].coordinates) == 6) && (InRange(get<0>(WPawns[j].coordinates),atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                && InRange(get<1>(WPawns[j].coordinates)-2,atackers[0][1], get<1>(WKings[0].coordinates) )
+                && abs(get<1>(WKings[0].coordinates) - (get<1>(WPawns[j].coordinates)-2)) == abs(get<0>(WKings[0].coordinates) - get<0>(WPawns[j].coordinates)))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-2});
+                }
+            }
+            for (size_t j = 0; j < WRooks.size(); j++)
+            {
+                RooksCopy[j].Predicthion = {};
+                for (size_t i =0; i<WRooks[j].Predicthion.size(); i++){
+                    if (InRange(WRooks[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WRooks[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WRooks[j].Predicthion[i][0])){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
+                    }
+                    if (InRange(WRooks[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WRooks[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WRooks[j].Predicthion[i][0])){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
+                    }
+                }
+
+            }
+            for (size_t j = 0; j < WBishops.size(); j++)
+            {
+                BishopsCopy[j].Predicthion = {};
+                for (size_t i =0; i<WBishops[j].Predicthion.size(); i++){
+                    if (InRange(WBishops[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WBishops[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WBishops[j].Predicthion[i][0])){
+                        BishopsCopy[j].Predicthion.push_back(WBishops[j].Predicthion[i]);
+                    }
+                    if (InRange(WBishops[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WBishops[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WBishops[j].Predicthion[i][0])){
+                        BishopsCopy[j].Predicthion.push_back(WBishops[j].Predicthion[i]);
+                    }
+                }
+
+            }
+            for (size_t j = 0; j < WKnights.size(); j++){
+                KnightsCopy[j].Predicthion = {};
+                for (size_t i =0; i<WKnights[j].Predicthion.size(); i++){
+                    if (InRange(WKnights[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WKnights[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WKnights[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WKnights[j].Predicthion[i][0])){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
+                    }
+                    if (InRange(WKnights[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WKnights[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WKnights[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WKnights[j].Predicthion[i][0])){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
+                    }
+                }
+            }
+            for (size_t j = 0; j < WQueens.size(); j++)
+            {
+                QueensCopy[j].Predicthion ={};
+                for (size_t i =0; i<WQueens[j].Predicthion.size(); i++){
+                   if (InRange(WQueens[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                   && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                   && abs(get<1>(WKings[0].coordinates) - WQueens[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WQueens[j].Predicthion[i][0])){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+                    if (InRange(WQueens[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WQueens[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WQueens[j].Predicthion[i][0])){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+                }
+
+            }
+
+        }
+        else  if (atackers[0][2] == (int)'q'){
+            for (size_t j = 0; j < WPawns.size(); j++){
+                PawnsCopy[j].Predicthion = {};
+                if ((get<1>(WPawns[j].coordinates)-1 >=0) 
+                && (atackers[0][0] == get<0>(WPawns[j].coordinates) == get<0>(WKings[0].coordinates) 
+                && InRange(get<1>(WPawns[j].coordinates)-1, atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+                else if ((get<1>(WPawns[j].coordinates)-1 >=0) 
+                && (atackers[0][1] == get<1>(WPawns[j].coordinates)-1  == get<1>(WKings[0].coordinates)
+                && InRange(get<0>(WPawns[j].coordinates), atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+
+                if ((get<1>(WPawns[j].coordinates) == 6) && (get<1>(WPawns[j].coordinates)-1 >=0) 
+                && (atackers[0][0] == get<0>(WPawns[j].coordinates) == get<0>(WKings[0].coordinates) 
+                && InRange(get<1>(WPawns[j].coordinates)-1, atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+                else if ((get<1>(WPawns[j].coordinates) == 6) && (get<1>(WPawns[j].coordinates)-1 >=0) 
+                && (atackers[0][1] == get<1>(WPawns[j].coordinates)-1  == get<1>(WKings[0].coordinates)
+                && InRange(get<0>(WPawns[j].coordinates), atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+
+                if ((InRange(get<0>(WPawns[j].coordinates),atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                && InRange(get<1>(WPawns[j].coordinates)-1,atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                && abs(get<1>(WKings[0].coordinates) - (get<1>(WPawns[j].coordinates)-1)) == abs(get<0>(WKings[0].coordinates) - get<0>(WPawns[j].coordinates)))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-1});
+                }
+                else if ((get<1>(WPawns[j].coordinates) == 6) && (InRange(get<0>(WPawns[j].coordinates),atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                && InRange(get<1>(WPawns[j].coordinates)-2,atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                && abs(get<1>(WKings[0].coordinates) - (get<1>(WPawns[j].coordinates)-2)) == abs(get<0>(WKings[0].coordinates) - get<0>(WPawns[j].coordinates)))){
+                    PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates), get<1>(WPawns[j].coordinates)-2});
+                }
+            }
+            for (size_t j = 0; j < WRooks.size(); j++)
+            {
+                RooksCopy[j].Predicthion = {};
+                for (size_t i =0; i<WRooks[j].Predicthion.size(); i++){
+                    if ((atackers[0][0] == WRooks[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
+                    }
+                    else if ((atackers[0][1] == WRooks[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WRooks[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
+                    }
+
+                    if (InRange(WRooks[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WRooks[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WRooks[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WRooks[j].Predicthion[i][0])){
+                        RooksCopy[j].Predicthion.push_back(WRooks[j].Predicthion[i]);
+                    }
+                }
+
+            }
+            for (size_t j = 0; j < WBishops.size(); j++)
+            {
+                BishopsCopy[j].Predicthion = {};
+                for (size_t i =0; i<WBishops[j].Predicthion.size(); i++){
+                    if ((atackers[0][0] == WBishops[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                        BishopsCopy[j].Predicthion.push_back(WBishops[j].Predicthion[i]);
+                    }
+                    else if ((atackers[0][1] == WBishops[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WBishops[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                        BishopsCopy[j].Predicthion.push_back(WBishops[j].Predicthion[i]);
+                    }
+
+                    if (InRange(WBishops[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WBishops[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WBishops[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WBishops[j].Predicthion[i][0])){
+                        BishopsCopy[j].Predicthion.push_back(WBishops[j].Predicthion[i]);
+                    }
+                    
+                }
+
+            }
+            for (size_t j = 0; j < WKnights.size(); j++){
+                KnightsCopy[j].Predicthion = {};
+                for (size_t i =0; i<WKnights[j].Predicthion.size(); i++){
+                    if ((atackers[0][0] == WKnights[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WKnights[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
+                    }
+                    else if ((atackers[0][1] == WKnights[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WKnights[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
+                    }
+
+                    if (InRange(WKnights[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WKnights[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WKnights[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WKnights[j].Predicthion[i][0])){
+                        KnightsCopy[j].Predicthion.push_back(WKnights[j].Predicthion[i]);
+                    }
+                }
+            }
+            for (size_t j = 0; j < WQueens.size(); j++)
+            {
+                QueensCopy[j].Predicthion ={};
+                for (size_t i =0; i<WQueens[j].Predicthion.size(); i++){
+                    if ((atackers[0][0] == WQueens[j].Predicthion[i][0] == get<0>(WKings[0].coordinates) 
+                    && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ))){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+                    else if ((atackers[0][1] == WQueens[j].Predicthion[i][1] == get<1>(WKings[0].coordinates) 
+                    && InRange(WQueens[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ))){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+
+
+                    if (InRange(WQueens[j].Predicthion[i][0],atackers[0][0], get<0>(WKings[0].coordinates) ) 
+                    && InRange(WQueens[j].Predicthion[i][1],atackers[0][1], get<1>(WKings[0].coordinates) ) 
+                    && abs(get<1>(WKings[0].coordinates) - WQueens[j].Predicthion[i][1]) == abs(get<0>(WKings[0].coordinates) - WQueens[j].Predicthion[i][0])){
+                        QueensCopy[j].Predicthion.push_back(WQueens[j].Predicthion[i]);
+                    }
+
+                }
+
+            }
+            
+        }
+    
+//---------------------------------------------------------------------------
         for (size_t j = 0; j < WPawns.size(); j++)
         {
-            for (size_t i = 0; i <WPawns[j].Predicthion.size(); i++){
-                if ((WPawns[j].Predicthion[0][0] == atackers[0][0] && WPawns[j].Predicthion[0][1] == atackers[0][1])){
-                    ;
-                }
-                else{
-                    WPawns[j].Predicthion.erase(WPawns[j].Predicthion.begin());
-                }
+            if ((get<0>(WPawns[j].coordinates)-1 == atackers[0][0] && (get<1>(WPawns[j].coordinates))-1 == atackers[0][1])){
+                PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates)-1, get<1>(WPawns[j].coordinates)-1} );
             }
+            else if ((get<0>(WPawns[j].coordinates)+1 == atackers[0][0] && (get<1>(WPawns[j].coordinates))-1 == atackers[0][1])){
+                PawnsCopy[j].Predicthion.push_back({get<0>(WPawns[j].coordinates)+1, get<1>(WPawns[j].coordinates)-1} );
+            }
+
         }
         for (size_t j = 0; j < WRooks.size(); j++)
         {
             for (size_t i = 0; i <WRooks[j].Predicthion.size(); i++){
-                if ((WRooks[j].Predicthion[0][0] == atackers[0][0] && WRooks[j].Predicthion[0][1] == atackers[0][1])){
-                    ;
-                }
-                else{
-                    WRooks[j].Predicthion.erase(WRooks[j].Predicthion.begin());
+                if ((WRooks[j].Predicthion[i][0] == atackers[0][0] && WRooks[j].Predicthion[i][1] == atackers[0][1])){
+                    RooksCopy[j].Predicthion.push_back({WRooks[j].Predicthion[i][0], WRooks[j].Predicthion[i][1]});
                 }
             }
         }
         for (size_t j = 0; j < WKnights.size(); j++)
         {
             for (size_t i = 0; i <WKnights[j].Predicthion.size(); i++){
-                if (!(WKnights[j].Predicthion[0][0] == atackers[0][0] && WKnights[j].Predicthion[0][1] == atackers[0][1])){
-                    ;
-                }
-                else{
-                    WKnights[j].Predicthion.erase(WKnights[j].Predicthion.begin());
+                if ((WKnights[j].Predicthion[i][0] == atackers[0][0] && WKnights[j].Predicthion[i][1] == atackers[0][1])){
+                    KnightsCopy[j].Predicthion.push_back({WKnights[j].Predicthion[i][0], WKnights[j].Predicthion[i][1]});
                 }
             }
         }
         for (size_t j = 0; j < WBishops.size(); j++)
         {
             for (size_t i = 0; i <WBishops[j].Predicthion.size(); i++){
-                if ((WBishops[j].Predicthion[0][0] == atackers[0][0] && WBishops[j].Predicthion[0][1] == atackers[0][1])){
-                    ;
-                }
-                else{
-                    WBishops[j].Predicthion.erase(WBishops[j].Predicthion.begin());
+                if ((WBishops[j].Predicthion[i][0] == atackers[0][0] && WBishops[j].Predicthion[i][1] == atackers[0][1])){
+                    BishopsCopy[j].Predicthion.push_back({WBishops[j].Predicthion[i][0], WBishops[j].Predicthion[i][1]});
                 }
             }
         }
         for (size_t j = 0; j < WQueens.size(); j++)
         {
             for (size_t i = 0; i <WQueens[j].Predicthion.size(); i++){
-                if ((WQueens[j].Predicthion[0][0] == atackers[0][0] && WQueens[j].Predicthion[0][1] == atackers[0][1])){
-                    ;
-                }
-                else{
-                    WQueens[j].Predicthion.erase(WQueens[j].Predicthion.begin());
+                if ((WQueens[j].Predicthion[i][0] == atackers[0][0] && WQueens[j].Predicthion[i][1] == atackers[0][1])){
+                    QueensCopy[j].Predicthion.push_back({WQueens[j].Predicthion[i][0], WQueens[j].Predicthion[i][1]});
                 }
             }
         }
-        pieces = {WPawns, WRooks, WKnights, WBishops, WQueens, WKings};
+        pieces = {PawnsCopy, RooksCopy, KnightsCopy, BishopsCopy, QueensCopy};
         return pieces;
     }
+}
+
+bool idk (vector<BPawn> BPawns, vector<BRook> BRooks, vector<BKnight> BKnights, vector<BBishop> BBishops, vector<BQueen> BQueens, vector<WKing> WKings,  vector<vector<char>> board){
+        vector<vector<char>> WDead = { {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','.','.','.','.','.'},
+    {'.','.','.','X','X','X','.','.'},
+    {'.','.','.','X','.','X','.', '.'} };
+        tuple<vector<vector<int>>, vector<vector<char>>> func;
+        for (int i =0; i < BPawns.size(); i++){
+            func = BPawns[i].predicthion(BPawns[i].coordinates, board, WDead);
+            BPawns[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <BRooks.size(); i++){
+            func = BRooks[i].predicthion(BRooks[i].coordinates, board, WDead);
+            BRooks[i].Predicthion = get<0>(func) ;
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <BKnights.size(); i++){
+            func = BKnights[i].predicthion(BKnights[i].coordinates, board, WDead);
+            BKnights[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <BBishops.size(); i++){
+            func = BBishops[i].predicthion(BBishops[i].coordinates, board, WDead);
+            BBishops[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        for (int i =0; i <BQueens.size(); i++){
+            func = BQueens[i].predicthion(BQueens[i].coordinates, board, WDead);
+            BQueens[i].Predicthion = get<0>(func);
+            WDead = get<1>(func);
+        }
+        if (WDead[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates)] == 'X'){
+            return true;
+        }
+        else{
+            return false;
+        }
+
 }
     // После того, как прогрма определит атакующих, нужно проверить их количество, если атакующих 2, и более, нужно удалить все возможные ходы кроме ходов короля, при количстве 
     // атакующих равнаму 1, нужно найти лишь те ходы, которые перекрывают короля
@@ -2031,7 +2325,20 @@ tuple <vector <WPawn>, vector <WRook>, vector <WKnight>, vector <WBishop>, vecto
     return a;
 };
 
-vector < vector <char> > render(vector <WPawn> WPawns, vector <BPawn> BPawns, vector <WRook> WRooks, vector <BRook> BRooks, vector<WKnight> WKnights, vector<BKnight> BKnights, vector <WBishop> WBishops, vector <BBishop> BBishops, vector <WQueen> WQueens, vector <BQueen> BQueens, vector <WKing> WKings, vector <BKing> BKings, vector <vector<char>> board) {
+void render(vector <vector<char>> board) {
+    for (size_t i = 0; i < 8; i++)
+    {
+        for (size_t j = 0; j < 8; j++)
+        {
+            cout << board[i][j];
+
+        }
+        cout << endl;
+
+    }
+}
+
+vector<vector<char>> update (vector <WPawn> WPawns, vector <BPawn> BPawns, vector <WRook> WRooks, vector <BRook> BRooks, vector<WKnight> WKnights, vector<BKnight> BKnights, vector <WBishop> WBishops, vector <BBishop> BBishops, vector <WQueen> WQueens, vector <BQueen> BQueens, vector <WKing> WKings, vector <BKing> BKings, vector <vector<char>> board){
     board = { {'.','.','.','.','.','.','.','.'},
     {'.','.','.','.','.','.','.','.'},
     {'.','.','.','.','.','.','.','.'},
@@ -2087,21 +2394,12 @@ vector < vector <char> > render(vector <WPawn> WPawns, vector <BPawn> BPawns, ve
         board[get<1>(BKings[i].coordinates)][get<0>(BKings[i].coordinates)] = '@';
     }
 
-    for (size_t i = 0; i < 8; i++)
-    {
-        for (size_t j = 0; j < 8; j++)
-        {
-            cout << board[i][j];
-
-        }
-        cout << endl;
-
-    }
     return board;
 }
 
 int main() {
     int Turn = 0, wwww = 0;
+    bool status = 1;
     vector<vector<char>> trouble1, trouble2;
     WPawn P1, P2, P3, P4, P5, P6, P7, P8; BPawn p1, p2, p3, p4, p5, p6, p7, p8;
     WRook R1, R2; BRook r1, r2;
@@ -2122,6 +2420,12 @@ int main() {
     vector <BQueen> BQueens = { q1 }; BQueens[0].coordinates = { 3, 0 };
     vector <WKing> WKings = { K1 }; WKings[0].coordinates = { 4,7 };
     vector <BKing> BKings = { k1 }; BKings[0].coordinates = { 4,0 };
+    vector <WPawn> WPawnsCopy = WPawns; vector <BPawn> BPawnsCopy = BPawns;
+    vector <WRook> WRooksCopy = WRooks; vector <BRook> BRooksCopy = BRooks;
+    vector <WKnight> WKnightsCopy = WKnights; vector <BKnight> BKnightsCopy = BKnights;
+    vector <WBishop> WBishopsCopy = WBishops; vector <BBishop> BBishopsCopy = BBishops;
+    vector <WQueen> WQueensCopy = WQueens; vector <BQueen> BQueensCopy = BQueens;
+
     vector < vector <char> > board = { {'.','.','.','.','.','.','.','.'},
     {'.','.','.','.','.','.','.','.'},
     {'.','.','.','.','.','.','.','.'},
@@ -2149,7 +2453,7 @@ int main() {
     tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector <WKing>, vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQueen>, vector<BKing>> A;
     tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>> w;
     tuple <vector<BPawn>, vector<BRook>, vector<BKnight>, vector<BBishop>, vector<BQueen>> b;
-    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>, vector<WKing>> er;
+    tuple <vector<WPawn>, vector<WRook>, vector<WKnight>, vector<WBishop>, vector<WQueen>> er;
     tuple<vector<vector<int>>, vector<vector<char>>> func;
     for (int i = 0; i < WKnights.size(); i++) {
         func = WKnights[i].predicthion(WKnights[i].coordinates, board, BDead);
@@ -2169,101 +2473,111 @@ int main() {
         BPawns[i].coordinates = { i, 1 };
         BPawns[i].Predicthion = { {i, 2}, {i, 3} };
     }
-    board = render(WPawns, BPawns, WRooks, BRooks, WKnights, BKnights, WBishops, BBishops, WQueens, BQueens, WKings, BKings, board);
+    board = update(WPawns, BPawns, WRooks, BRooks, WKnights, BKnights, WBishops, BBishops, WQueens, BQueens, WKings, BKings, board);
+    render(board);
     while (true) {
-        move = enter();
+        
         if (Turn == 0) {
             if (WDead[get<1>(WKings[0].coordinates)][get<0>(WKings[0].coordinates)] == 'X'){
-                er = eterethion(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, board);
+                er = WEterethion(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, board);
                 WPawns = get<0>(er);
                 WRooks = get<1>(er);
                 WKnights = get<2>(er);
                 WBishops = get<3>(er);
                 WQueens = get<4>(er);
-                WKings = get<5>(er);
 
             }
-            if (move.size() == 2) {
-                WPawns = makeTurn(move, WPawns);
-                A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WPawn");
-                BPawns = get<6>(A);
-                BRooks = get<7>(A);
-                BKnights = get<8>(A);
-                BBishops = get<9>(A);
-                BQueens = get<10>(A);
-                BKings = get<11>(A);
-                if (move[1] == '8'){
-                    w = WMorph(WPawns, WRooks, WKnights, WBishops, WQueens);
-                    WPawns = get<0>(w);
-                    WRooks = get<1>(w);
-                    WKnights = get<2>(w);
-                    WBishops = get<3>(w);
-                    WQueens = get<4>(w);
+            while (status){
+
+                move = enter();
+                if (move.size() == 2) {
+                    WPawnsCopy = makeTurn(move, WPawns);
+                    A = captured(WPawnsCopy, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WPawn");
+                    BPawnsCopy = get<6>(A);
+                    BRooksCopy = get<7>(A);
+                    BKnightsCopy = get<8>(A);
+                    BBishopsCopy = get<9>(A);
+                    BQueensCopy = get<10>(A);
+                    BKings = get<11>(A);
+                    if (move[1] == '8'){
+                        w = WMorph(WPawnsCopy, WRooks, WKnights, WBishops, WQueens);
+                        WPawnsCopy = get<0>(w);
+                        WRooksCopy = get<1>(w);
+                        WKnightsCopy = get<2>(w);
+                        WBishopsCopy = get<3>(w);
+                        WQueensCopy = get<4>(w);
+                    }
+                    
+                    // функцыя маэ виконуватись першою, пысля чого потрыбно виконувати функцыю  captured, яку потрыбно выдредагувати
                 }
+                else {
+                    if (move[0] == 'R') {
+                        WRooksCopy = makeTurn(move, WRooks);
+                        A = captured(WPawns, WRooksCopy, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WRook");
+                        BPawnsCopy = get<6>(A);
+                        BRooksCopy = get<7>(A);
+                        BKnightsCopy = get<8>(A);
+                        BBishopsCopy = get<9>(A);
+                        BQueensCopy = get<10>(A);
+                        BKings = get<11>(A);
+
+                    }
+                    else if (move[0] == 'K' && move[1] == 'n') {
+                        WKnightsCopy = makeTurn(move, WKnights);
+                        A = captured(WPawns, WRooks, WKnightsCopy, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WKnight");
+                        BPawnsCopy = get<6>(A);
+                        BRooksCopy = get<7>(A);
+                        BKnightsCopy = get<8>(A);
+                        BBishopsCopy = get<9>(A);
+                        BQueensCopy = get<10>(A);
+                        BKings = get<11>(A);
+
+                    }
+                    else if (move[0] == 'B') {
+                        WBishopsCopy = makeTurn(move, WBishops);
+                        A = captured(WPawns, WRooks, WKnights, WBishopsCopy, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WBishop");
+                        BPawnsCopy = get<6>(A);
+                        BRooksCopy = get<7>(A);
+                        BKnightsCopy = get<8>(A);
+                        BBishopsCopy = get<9>(A);
+                        BQueensCopy = get<10>(A);
+                        BKings = get<11>(A);
+
+                    }
+                    else if (move[0] == 'Q') {
+                        WQueensCopy = makeTurn(move, WQueens);
+                        A = captured(WPawns, WRooks, WKnights, WBishops, WQueensCopy, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WQueen");
+                        BPawnsCopy = get<6>(A);
+                        BRooksCopy = get<7>(A);
+                        BKnightsCopy = get<8>(A);
+                        BBishopsCopy = get<9>(A);
+                        BQueensCopy = get<10>(A);
+                        BKings = get<11>(A);
+
+                    }
+                    else if (move[0] == 'K') {
+                        WKings = makeTurn(move, WKings);
+                        A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WKing");
+                        BPawns = get<6>(A);
+                        BRooks = get<7>(A);
+                        BKnights = get<8>(A);
+                        BBishops = get<9>(A);
+                        BQueens = get<10>(A);
+                        BKings = get<11>(A);
+
+                    }
+                }
+                board = update(WPawnsCopy, BPawnsCopy, WRooksCopy, BRooksCopy, WKnightsCopy, BKnightsCopy, WBishopsCopy, BBishopsCopy, WQueensCopy, BQueensCopy, WKings, BKings, board);
+                status = idk(BPawnsCopy, BRooksCopy, BKnightsCopy, BBishopsCopy, BQueensCopy, WKings, board);
                 
-                // функцыя маэ виконуватись першою, пысля чого потрыбно виконувати функцыю  captured, яку потрыбно выдредагувати
             }
-            else {
-                if (move[0] == 'R') {
-                    WRooks = makeTurn(move, WRooks);
-                    A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WRook");
-                    BPawns = get<6>(A);
-                    BRooks = get<7>(A);
-                    BKnights = get<8>(A);
-                    BBishops = get<9>(A);
-                    BQueens = get<10>(A);
-                    BKings = get<11>(A);
-
-                }
-                else if (move[0] == 'K' && move[1] == 'n') {
-                    WKnights = makeTurn(move, WKnights);
-                    A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WKnight");
-                    BPawns = get<6>(A);
-                    BRooks = get<7>(A);
-                    BKnights = get<8>(A);
-                    BBishops = get<9>(A);
-                    BQueens = get<10>(A);
-                    BKings = get<11>(A);
-
-                }
-                else if (move[0] == 'B') {
-                    WBishops = makeTurn(move, WBishops);
-                    A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WBishop");
-                    BPawns = get<6>(A);
-                    BRooks = get<7>(A);
-                    BKnights = get<8>(A);
-                    BBishops = get<9>(A);
-                    BQueens = get<10>(A);
-                    BKings = get<11>(A);
-
-                }
-                else if (move[0] == 'Q') {
-                    WQueens = makeTurn(move, WQueens);
-                    A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WQueen");
-                    BPawns = get<6>(A);
-                    BRooks = get<7>(A);
-                    BKnights = get<8>(A);
-                    BBishops = get<9>(A);
-                    BQueens = get<10>(A);
-                    BKings = get<11>(A);
-
-                }
-                else if (move[0] == 'K') {
-                    WKings = makeTurn(move, WKings);
-                    A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "WKing");
-                    BPawns = get<6>(A);
-                    BRooks = get<7>(A);
-                    BKnights = get<8>(A);
-                    BBishops = get<9>(A);
-                    BQueens = get<10>(A);
-                    BKings = get<11>(A);
-
-                }
-            }
-
+            
+            WPawns = WPawnsCopy; WRooks = WRooksCopy; WKnights = WKnightsCopy; WBishops = WBishopsCopy; WQueens = WQueensCopy;
+            BPawns = BPawnsCopy; BRooks = BRooksCopy; BKnights = BKnightsCopy; BBishops = BBishopsCopy; BQueens = BQueensCopy;
             
         }
         else {
+            move = enter();
             if (move.size() == 2) {
                 BPawns = makeTurn(move, BPawns);
                 A = captured(WPawns, WRooks, WKnights, WBishops, WQueens, WKings, BPawns, BRooks, BKnights, BBishops, BQueens, BKings, "BPawn");
@@ -2343,9 +2657,18 @@ int main() {
 
             }
         }
-
-        board = render(WPawns, BPawns, WRooks, BRooks, WKnights, BKnights, WBishops, BBishops, WQueens, BQueens, WKings, BKings, board);
-
+        status = 1;
+        board = update(WPawns, BPawns, WRooks, BRooks, WKnights, BKnights, WBishops, BBishops, WQueens, BQueens, WKings, BKings, board);
+        render(board);
+        BDead = {{'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'},
+                {'.', '.', '.', '.', '.', '.', '.', '.'}};
+        WDead = BDead;
          for (int i =0; i < WPawns.size(); i++){
             func = WPawns[i].predicthion(WPawns[i].coordinates, board, BDead);
             WPawns[i].Predicthion = get<0>(func);
