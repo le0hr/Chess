@@ -2326,6 +2326,7 @@ tuple <vector <WPawn>, vector <WRook>, vector <WKnight>, vector <WBishop>, vecto
 };
 
 void render(vector <vector<char>> board) {
+    system("cls");
     for (size_t i = 0; i < 8; i++)
     {
         for (size_t j = 0; j < 8; j++)
@@ -2336,6 +2337,7 @@ void render(vector <vector<char>> board) {
         cout << endl;
 
     }
+
 }
 
 vector<vector<char>> update (vector <WPawn> WPawns, vector <BPawn> BPawns, vector <WRook> WRooks, vector <BRook> BRooks, vector<WKnight> WKnights, vector<BKnight> BKnights, vector <WBishop> WBishops, vector <BBishop> BBishops, vector <WQueen> WQueens, vector <BQueen> BQueens, vector <WKing> WKings, vector <BKing> BKings, vector <vector<char>> board){
@@ -2508,7 +2510,6 @@ int main() {
                         WQueensCopy = get<4>(w);
                     }
                     
-                    // функцыя маэ виконуватись першою, пысля чого потрыбно виконувати функцыю  captured, яку потрыбно выдредагувати
                 }
                 else {
                     if (move[0] == 'R') {
