@@ -7,5 +7,4 @@ public:
 	Pawn(int team, int xPosition, int yPosition);
 	~Pawn();
 private:
-	int repeatable;
 };

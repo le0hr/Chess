@@ -7,5 +7,4 @@ public:
 	Rook(int team, int xPosition, int yPosition);
 	~Rook();
 private:
-	int repeatable;
 };

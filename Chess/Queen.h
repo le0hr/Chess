@@ -7,5 +7,4 @@ public:
 	Queen(int team, int xPosition, int yPosition);
 	~Queen();
 private:
-	int repeatable;
 };
