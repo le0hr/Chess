@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 #include <tuple>
-
+#include <unordered_map>
+#include <cctype>
 
 class Piece
 {
@@ -10,8 +11,8 @@ public:
 	virtual ~Piece();
 	void movePiece(int xPosition, int yPosition);
 	std::tuple<int,int> getPosition();
-	virtual bool isValidMove(int xPosition, int yPosition, int ocupation);
-	
+	virtual bool isValidMove(int xPosition, int yPosition, char board[8][8]);
+	bool isOccupied(int xPosition, int yPosition, char board[8][8]);
 
 protected:
 	int repeatable; // can move multiple times in one direction

@@ -32,23 +32,7 @@ Board::Board() {
 	bPieces.emplace_back(std::make_unique<Queen>(1, 3, 7));
 	bPieces.emplace_back(std::make_unique<King>(1, 4, 7));
 }
-int Board::isOccupied(int xPosition, int yPosition, int team) {
-	for (const auto& piece : this->wPieces) {
-		int px, py;
-		std::tie(px, py) = piece->getPosition();
-		if (px == xPosition && py == yPosition) {
-			return (team == -1) ? IS_ALLY : IS_ENEMY;
-		}
-	}
-	for (const auto& piece : this->bPieces) {
-		int px, py;
-		std::tie(px, py) = piece->getPosition();
-		if (px == xPosition && py == yPosition) {
-			return (team == 1) ? IS_ALLY : IS_ENEMY;
-		}
-	}
-	return IS_EMPTY;
-}
+
 
 void Board::renderBoard() {
 	// reset board
@@ -83,10 +67,22 @@ void Board::renderBoard() {
 		else if (dynamic_cast<King*>(piece.get())) symbol = 'k';
 		board[py][px] = symbol;
 	}
-	// print board
-	for (int y = 7; y >= 0; --y) {
+
+	// copy to class board
+
+	for (int y = 0; y < 8; ++y) {
 		for (int x = 0; x < 8; ++x) {
-			std::cout << board[y][x] << ' ';
+			this->board[y][x] = board[y][x];
+		}
+	}
+}
+
+void Board::displayBoard(){
+	for (int i = 7; i >= 0; --i)
+	{
+		for (int j = 0; j < 8; ++j)
+		{
+			std::cout << this->board[i][j] << ' ';
 		}
 		std::cout << std::endl;
 	}

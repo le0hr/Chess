@@ -20,6 +20,8 @@ int main() {
 	while (true)
 	{	
 		board.renderBoard();
+		board.displayBoard();
+
 		while (true) {
 			char pieceChar;
 			int xPos, yPos;
@@ -32,7 +34,7 @@ int main() {
 					(pieceChar == 'B' && dynamic_cast<Bishop*>(piece.get())) ||
 					(pieceChar == 'Q' && dynamic_cast<Queen*>(piece.get())) ||
 					(pieceChar == 'K' && dynamic_cast<King*>(piece.get()))) {
-					if (piece->isValidMove(xPos, yPos, board.isOccupied(xPos, yPos, -1))) {
+					if (piece->isValidMove(xPos, yPos, board.board)) {
 						piece->movePiece(xPos, yPos);
 						isValidMove = 1;
 						break;
@@ -49,6 +51,8 @@ int main() {
 		}
 
 		board.renderBoard();
+		board.displayBoard();
+
 		while (true)
 		{
 			char pieceChar;
@@ -62,7 +66,7 @@ int main() {
 					(pieceChar == 'B' && dynamic_cast<Bishop*>(piece.get())) ||
 					(pieceChar == 'Q' && dynamic_cast<Queen*>(piece.get())) ||
 					(pieceChar == 'K' && dynamic_cast<King*>(piece.get()))) {
-					if (piece->isValidMove(xPos, yPos, board.isOccupied(xPos, yPos, 1))) {
+					if (piece->isValidMove(xPos, yPos, board.board)) {
 						piece->movePiece(xPos, yPos);
 						isValidMove = 1;
 						break;
@@ -77,7 +81,6 @@ int main() {
 				std::cout << "Invalid move, try again." << std::endl;
 			}
 		}
-		board.renderBoard();
 
 	}
 	

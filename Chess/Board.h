@@ -15,10 +15,11 @@ public:
 	Board();
 	int isOccupied(int xPosition, int yPosition, int team);
 	void renderBoard();
+	void displayBoard();
+
 
 	std::vector<std::unique_ptr<Piece>> wPieces, bPieces;
-	
-private:
+
 	char board[8][8] = { {'.', '.', '.', '.', '.', '.', '.', '.'},
 						{'.', '.', '.', '.', '.', '.', '.', '.'},
 						{'.', '.', '.', '.', '.', '.', '.', '.'},
